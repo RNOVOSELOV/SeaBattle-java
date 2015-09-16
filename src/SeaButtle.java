@@ -7,13 +7,13 @@ public class SeaButtle {
     public static void main(String[] args) {
         Player player = new Player();
         Field field = new Field();
-        System.out.println("Игра началась:");
-        do {
+        System.out.println("\nИгра началась:");
+        while (field.isNotgameOver()) {
             field.showField();
             int shoot = player.getShoot();
             field.doShoot(shoot);
-        } while (field.isNotgameOver());
+        }
         field.showField();
-        System.out.println("Игра закончена");
+        System.out.println("Игра закончена.");
     }
 }
