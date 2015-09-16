@@ -18,6 +18,7 @@ public class Ship {
         this(deckCount, "Неизвестный (палуб: " + deckCount + ")");
     }
 
+    // Первый параметр - колличество палуб на корабле, ограничено только размерностью поля
     Ship(int deckCount, String name) {
         this.name = name;
         this.deckCount = deckCount;
@@ -30,7 +31,7 @@ public class Ship {
     }
 
     // Корабль получил дамаг
-    void getCrash () {
+    void setCrash () {
         if (deckCount > 0)
         deckCount--;
     }

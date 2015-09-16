@@ -19,16 +19,16 @@ public class Player {
 
         int shoot;
         do {
-            System.out.print(name + ", введите координату для выстрела: ");
+            System.out.print(name + ", введите координату для выстрела [1-" + Field.SIZE + "]: ");
             if (scanner.hasNextInt()) {
                 shoot = scanner.nextInt();
-                if (shoot >=0 && shoot < Field.SIZE)
+                if (shoot >=1 && shoot <= Field.SIZE)
                     break;
                 else
                     System.out.println(name + " вы ввели неверную координату, повторите ввод пожалуйста.");
             }
             scanner.nextLine();
         } while (true);
-        return shoot;
+        return shoot-1; // Передаем в формате координат
     }
 }

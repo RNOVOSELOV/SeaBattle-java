@@ -5,6 +5,8 @@ import java.util.Random;
  */
 public class SeaButtle {
     public static void main(String[] args) {
+//        Player [] players;            // Ввести еще одного пользователя
+
         Player player = new Player();
         Field field = new Field();
         System.out.println("\nИгра началась:");
