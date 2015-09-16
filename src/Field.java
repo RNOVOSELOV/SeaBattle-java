@@ -1,25 +1,33 @@
 import com.sun.glass.ui.Size;
 
+import java.util.Random;
+
 /**
  * Created by novoselov on 16.09.2015.
  */
 public class Field {
-    int SIZE = 10;
-    char[] cells = new char[SIZE];
+    static int SIZE = 20;
+    char[] cells;
     Ship ship;
+    Field () {
+        cells = new char[SIZE];
+        ship = new Ship();
+        init();
+        setShip(ship);
+    }
     void init () {
         for (int i = 0; i < cells.length; i++) {
             cells [i] = '.';
         }
     }
     void showField () {
-        System.out.println(cells);
         for (char cell : cells) {
             if (cell == 'X')
                 System.out.print(".");
             else
                 System.out.print(cell);
         }
+        System.out.printf("\n");
     }
     void doShoot (int shoot) {
         switch (cells[shoot]) {
@@ -44,7 +52,10 @@ public class Field {
     }
 
     void setShip (Ship s) {
-        ship = s;
+        Random random = new Random();
+        s.position = random.nextInt(Field.SIZE);
         cells[s.position] = 'X';
+        System.out.print("Подсказка: ");
+        System.out.println(cells);
     }
 }

@@ -5,17 +5,26 @@ import java.util.Scanner;
  */
 public class Player {
     String name;
+    Scanner scanner;
+    Player () {
+        scanner = new Scanner(System.in);
+//        System.out.print("Ваше имя: ");
+//        name = scanner.nextLine();
+    }
     int getShoot () {
-        Scanner scanner = new Scanner(System.in);
+
         int shoot;
         do {
+            System.out.print(name + ", введите координату для выстрела: ");
             if (scanner.hasNextInt()) {
                 shoot = scanner.nextInt();
-                break;
+                if (shoot >=0 && shoot < Field.SIZE)
+                    break;
+                else
+                    System.out.println(name + " вы ввели неверную координату, повторите ввод пожалуйста.");
             }
             scanner.nextLine();
         } while (true);
-        System.out.println("Ваш выстрел: " + shoot);
         return shoot;
     }
 }
