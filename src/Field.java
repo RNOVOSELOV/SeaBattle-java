@@ -1,21 +1,71 @@
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Created by novoselov on 16.09.2015.
  */
 public class Field {
     static int SIZE = 20;       // Размер поля (Добавить ввод размерности от пользователя)
-    char[] cells;
-    Ship[] ships;               // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
+    private char[] cells;
+    protected ArrayList<Ship> ships;               // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
 
     Field() {
         cells = new char[SIZE];
-        ships = new Ship[3];                            // Можно добавить любое количество кораблей, но пока вручную :-)
-        ships[0] = new Ship(3, "Линкор Тирпиц");        // Корабль Трехпалубный первый параметр - палубность корабля, ограничена только размерностью поля
-        ships[1] = new Ship(2, "Крейсер Варяг");        // Двухпалубный
-        ships[2] = new Ship(1, "Катер Неустрашимый");   // Однопалубный
+        ships = new ArrayList<>();                            // Можно добавить любое количество кораблей, но пока вручную :-)
         init(cells);                // инициализируем игровое поле
-        setShips();                 // Расставляем корабли из массива на поле
+    }
+
+    void tuneSettings() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Нажмите любую клавишу чтоб создать флот вручную [ВВОД - назначить корабли по умолчанию]: ");
+        if (scanner.nextLine().isEmpty()) {
+            addShipsByDefault();
+        } else {
+            do {
+                int deck = getShipDeckCount();
+                if (deck == 0) {
+                    if (ships.size() == 0) {
+                        System.out.println("Вы не содали ни одного корабля, создана флотилия по умолчанию");
+                        addShipsByDefault();
+                    }
+                    break;
+                } else {
+                    addShip(deck);
+                }
+            } while (true);
+        }
+    }
+
+    void addShip(int deck) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите имя корабля [ВВОД - назначить имя по умолчанию]: ");
+        String name = scanner.nextLine();
+        ships.add(new Ship(deck, name));
+    }
+
+    int getShipDeckCount() {
+        int deck;
+        Scanner scanner = new Scanner(System.in);
+        do {
+            System.out.print("Введите палубность корабля [1-" + Field.SIZE + "; 0 - прекратить настройку кораблей]: ");
+            if (scanner.hasNextInt()) {
+                deck = scanner.nextInt();
+                if (deck >= 0 && deck <= Field.SIZE) {
+                    break;
+                } else {
+                    System.out.println("Вы ввели неверную размерность корабля, повторите ввод пожалуйста.");
+                }
+            }
+            scanner.nextLine();
+        } while (true);
+        return deck;
+    }
+
+    void addShipsByDefault() {
+        ships.add(new Ship(3, "Линкор Тирпиц"));        // Корабль Трехпалубный первый параметр - палубность корабля, ограничена только размерностью поля
+        ships.add(new Ship(2, "Крейсер Варяг"));        // Двухпалубный
+        ships.add(new Ship(1, "Катер Неустрашимый"));   // Однопалубный
     }
 
     void init(char[] cl) {
@@ -61,7 +111,7 @@ public class Field {
                 System.out.println("Мимо!");
                 cells[shoot] = '*';
                 break;
-            case 'O':
+            case '@':
             case '*':
                 System.out.println("Кэп, сверь координаты, ты сюда уже стрелял!");
                 break;
@@ -72,7 +122,7 @@ public class Field {
                     System.out.println(s.name + ": Ранен! Еще чуть чуть...");
                 else
                     System.out.println(s.name + ": Цель ликвидирована!");
-                cells[shoot] = 'O';
+                cells[shoot] = '@';
                 changePlayer = false;
                 break;
             default:
