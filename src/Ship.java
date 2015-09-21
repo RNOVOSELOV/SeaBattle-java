@@ -1,11 +1,9 @@
-import java.util.Random;
-
 /**
  * Created by novoselov on 16.09.2015.
  */
 public class Ship {
     int[] position;     // Координаты корабля
-    int deckCount;      // Колличество палуб
+    int deckCount;      // Колличество неподбитых палуб (в начале игры равно палубности корабля)
     String name;        // Имя корабля
 
     // Конструктор по умолчанию
@@ -26,13 +24,13 @@ public class Ship {
     }
 
     // Колличество неразрушенных палуб
-    int getDeck () {
+    int getDeck() {
         return deckCount;
     }
 
     // Корабль получил дамаг
-    void setCrash () {
+    void setCrash() {
         if (deckCount > 0)
-        deckCount--;
+            deckCount--;
     }
 }

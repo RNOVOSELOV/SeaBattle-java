@@ -1,6 +1,3 @@
-import com.sun.glass.ui.Size;
-
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -10,7 +7,6 @@ public class Field {
     static int SIZE = 20;       // Размер поля (Добавить ввод размерности от пользователя)
     char[] cells;
     Ship[] ships;               // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
-    Random random;
 
     Field() {
         cells = new char[SIZE];
@@ -18,8 +14,6 @@ public class Field {
         ships[0] = new Ship(3, "Линкор Тирпиц");        // Корабль Трехпалубный первый параметр - палубность корабля, ограничена только размерностью поля
         ships[1] = new Ship(2, "Крейсер Варяг");        // Двухпалубный
         ships[2] = new Ship(1, "Катер Неустрашимый");   // Однопалубный
-
-        random = new Random();
         init(cells);                // инициализируем игровое поле
         setShips();                 // Расставляем корабли из массива на поле
     }
@@ -50,20 +44,21 @@ public class Field {
     }
 
     // Поиск корабля по заданной координате
-    Ship getShip(int coord) {
+    Ship getShip(int coordinate) {
         for (Ship ship : ships) {
             for (int i = 0; i < ship.position.length; i++) {
-                if (ship.position[i] == coord)
+                if (ship.position[i] == coordinate)
                     return ship;
             }
         }
         return null;
     }
 
-    void doShoot(int shoot) {
+    boolean doShoot(int shoot) {
+        boolean changePlayer = true;
         switch (cells[shoot]) {
             case '.':
-                System.out.println("Мазила!");
+                System.out.println("Мимо!");
                 cells[shoot] = '*';
                 break;
             case 'O':
@@ -78,14 +73,16 @@ public class Field {
                 else
                     System.out.println(s.name + ": Цель ликвидирована!");
                 cells[shoot] = 'O';
+                changePlayer = false;
                 break;
             default:
                 System.out.println("ERROR! Unrecognazed symbol!");
         }
         System.out.println("");
+        return changePlayer;
     }
 
-    boolean isNotgameOver() {
+    boolean isNotGameOver() {
         return (getSumDecks() != 0);
     }   // Проверка на потопление всех кораблей
 
@@ -102,8 +99,9 @@ public class Field {
         // Массив необходим для проверки на соседство кораблей
         char[] checkCells = new char[SIZE];
         init(checkCells);
+        Random random = new Random();
         for (Ship ship : ships) {
-            setShip(ship, checkCells);      // Здесь расставляем кораблики
+            setShip(ship, checkCells, random);      // Здесь расставляем кораблики
         }
         // Небольшая подсказка перед игрой :-)
         System.out.print("Чит: ");
@@ -111,12 +109,12 @@ public class Field {
     }
 
     // Рекурсивная функция, которая расставляет кораблики
-    void setShip(Ship s, char[] ch) {
+    void setShip(Ship s, char[] ch, Random random) {
         // Если временная позиция подходит, то
         int tempPosition = random.nextInt(SIZE - s.deckCount + 1);
         for (int i = 0; i < s.deckCount; i++) {
             if (ch[tempPosition + i] != '.') {
-                setShip(s, ch);
+                setShip(s, ch, random);
                 return;
             }
         }
