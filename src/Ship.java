@@ -19,6 +19,8 @@ public class Ship {
     // Первый параметр - колличество палуб на корабле, ограничено только размерностью поля
     Ship(int deckCount, String name) {
         this.name = name;
+        if (name.isEmpty())
+            this.name = "Неизвестный (палуб: " + deckCount + ")";
         this.deckCount = deckCount;
         position = new int[deckCount];
     }
