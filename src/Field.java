@@ -87,11 +87,11 @@ public class Field {
     // Печать игрового поля
     void showField(boolean cheats) {
         for (int i = 0; i < SIZE; i++) {
-            for (char cell : cells[i]) {
-                if (cell == 'O' && cheats == false)
+            for (int j = 0; j < SIZE; j++) {
+                if (cells[j][i] == 'O' && cheats == false)
                     System.out.print(" · ");
                 else
-                    System.out.print(" " + cell + " ");
+                    System.out.print(" " + cells[j][i] + " ");
             }
             System.out.printf("\n");
         }
@@ -163,11 +163,16 @@ public class Field {
         int decks = getSumDecks();
         // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в три раза меньше размерности поля
         // Очень пригодится, когда количество кораблей и их размерность будет вводиться пользователем
-        if (decks > SIZE*2) {
+        if (decks > SIZE * 2) {
             System.out.println("Слишком много кораблей, заканчиваем играть, неинтересно!");
             System.out.println("Для продолжения игры необходимо увеличить размерность поля либо уменшить размерность (колличество) кораблей.");
             return;
         }
+
+        // Вставить сортировку от максимального до минимального в списке судов
+        // чтобы расставлять сначала наибольший корабль и лишь потом минимальные
+
+
         // Массив необходим для проверки на соседство кораблей
         char[][] checkCells = new char[SIZE][SIZE];
         init(checkCells);
@@ -187,14 +192,16 @@ public class Field {
         // Ищем опорную точку для головы корабля
         Point tempPoint;
         int firstCoordinate = random.nextInt(SIZE - s.getCountIsNotPaddedDecks() + 1);
-        int secondCoordinate = random.nextInt(SIZE + 1);
-        if (isHorizontal){
-            tempPoint = new Point(firstCoordinate,secondCoordinate);
+        int secondCoordinate = random.nextInt(SIZE);
+        if (isHorizontal) {
+            tempPoint = new Point(firstCoordinate, secondCoordinate);
         } else {
-            tempPoint = new Point(secondCoordinate,firstCoordinate);
+            tempPoint = new Point(secondCoordinate, firstCoordinate);
         }
         int x = 0;
         int y = 0;
+//        String srt = (isHorizontal == true) ? " Horizontal" : " Vertikal";
+//        System.out.println("x: " + tempPoint.getX() + " y: " + tempPoint.getY() + srt + " Decks: " + s.getDeck());
         for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
             if (ch[tempPoint.getX() + x][tempPoint.getY() + y] != '·') {
                 findFreeSpaceForShip(s, ch, random);
@@ -206,8 +213,6 @@ public class Field {
                 y++;
             }
         }
-        String srt = (isHorizontal==true)?" true":" false";
-        System.out.println("x: " + tempPoint.getX() + " y: " + tempPoint.getY() + srt);
         setShipOnFreeSpace(s, ch, tempPoint, isHorizontal);
     }
 
@@ -215,30 +220,72 @@ public class Field {
         int x = 0;
         int y = 0;
         for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
-            cells[tempPoint.getX() + x][tempPoint.getY() + y] = 'X';
-            ch[tempPoint.getX() + x][tempPoint.getY() + y] = 'X';
+            cells[tempPoint.getX() + x][tempPoint.getY() + y] = 'O';
+            ch[tempPoint.getX() + x][tempPoint.getY() + y] = 'O';
             s.addPosition(tempPoint.getX() + x, tempPoint.getY() + y);
+
+            if (isHorizontal) {
+                if (tempPoint.getY() != 0) {
+                    ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] = '•';
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] = '•';
+                }
+            } else {
+                if (tempPoint.getX() != 0) {
+                    ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] = '•';
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] = '•';
+                }
+            }
+
             if (isHorizontal) {
                 x++;
             } else {
                 y++;
             }
         }
-        /*
-        if (tempPosition != 0) {
-            ch[tempPosition - 1] = 'X';
-        }
-        if (tempPosition + s.getCountIsNotPaddedDecks() < SIZE) {
-            ch[tempPosition + s.getCountIsNotPaddedDecks()] = 'X';
-        }
-*/
 
-        for (int i = 0; i < SIZE; i++) {
-            for (char cell : ch[i]) {
-                System.out.print(" " + cell + " ");
+        if (isHorizontal) {
+            if (tempPoint.getX() != 0) {
+                ch[tempPoint.getX() - 1][tempPoint.getY()] = '•';
+                if (tempPoint.getY() != 0) {
+                    ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '•';
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    ch[tempPoint.getX() - 1][tempPoint.getY() + 1] = '•';
+                }
             }
-            System.out.printf("\n");
+            if (tempPoint.getX() + s.getDeck() != SIZE) {
+                ch[tempPoint.getX() + s.getDeck()][tempPoint.getY()] = '•';
+                if (tempPoint.getY() != 0) {
+                    ch[tempPoint.getX()+s.getDeck()][tempPoint.getY() - 1] = '•';
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    ch[tempPoint.getX() + s.getDeck()][tempPoint.getY() + 1] = '•';
+                }
+            }
+        } else {
+            if (tempPoint.getY() != 0) {
+                ch[tempPoint.getX()][tempPoint.getY() - 1] = '•';
+                if (tempPoint.getX() != 0) {
+                    ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '•';
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    ch[tempPoint.getX() + 1][tempPoint.getY() - 1] = '•';
+                }
+            }
+            if (tempPoint.getY()+s.getDeck() != SIZE) {
+                ch[tempPoint.getX()][tempPoint.getY() + s.getDeck()] = '•';
+                if (tempPoint.getX() != 0) {
+                    ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeck()] = '•';
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeck()] = '•';
+                }
+            }
         }
-        System.out.printf("\n");
+//        s.printPosition();
     }
 }

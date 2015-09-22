@@ -53,12 +53,19 @@ public class Ship {
     }
 
     public void addPosition(int x, int y) {
-        this.positions.add(new Point(x,y));
+        addPosition(new Point(x, y));
     }
 
     // Корабль получил дамаг
     void setCrash() {
         if (countIsNotPaddedDecks > 0)
             countIsNotPaddedDecks--;
+    }
+
+    void printPosition() {
+        for (Point position : positions) {
+            System.out.printf("[%d %d]", position.getX(), position.getY());
+        }
+        System.out.println(" ");
     }
 }
