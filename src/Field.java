@@ -6,12 +6,12 @@ import java.util.Scanner;
  * Created by novoselov on 16.09.2015.
  */
 public class Field {
-    static int SIZE = 20;                           // Размер поля (Добавить ввод размерности от пользователя)
-    private char[] cells;
+    static int SIZE = 10;                           // Размер поля (Добавить ввод размерности от пользователя)
+    private char[][] cells;
     private ArrayList<Ship> ships;                  // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
 
     Field() {
-        cells = new char[SIZE];
+        cells = new char[SIZE][SIZE];
         ships = new ArrayList<>();                  // Можно добавить любое количество кораблей, но пока вручную :-)
         init(cells);                                // инициализируем игровое поле
     }
@@ -69,19 +69,28 @@ public class Field {
         ships.add(new Ship(1, "Катер Неустрашимый"));   // Однопалубный
     }
 
-    void init(char[] cl) {
-        for (int i = 0; i < cl.length; i++) {
-            cl[i] = '.';
+    void init(char[][] cl) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cl[i][j] = '·';
+            }
         }
     }
 
     // Печать игрового поля
-    void showField() {
-        for (char cell : cells) {
-            if (cell == 'X')
-                System.out.print(".");
-            else
-                System.out.print(cell);
+    void showField () {
+        showField(true);
+    }
+
+    void showField(boolean cheats) {
+        for (int i = 0; i < SIZE; i++) {
+            for (char cell : cells[i]) {
+                if (cell == 'O' && cheats == false)
+                    System.out.print(" · ");
+                else
+                    System.out.print(" " + cell + " ");
+            }
+            System.out.printf("\n");
         }
         System.out.printf("\n");
     }
@@ -103,10 +112,20 @@ public class Field {
         return null;
     }
 
+    //  Пустое поле - '·'
+    //  Стоит корабль (для чита и при расстановке кораблей) - 'O'
+    //  Подбита палуба - 'X'
+    //  Стрелянное поле - '•'
+    //  Поле рядом с кораблем, когда корабль уничтожен - '¤'
+    //
+    //
+
+
     boolean doShoot(int shoot) {
         boolean changePlayer = true;
+/*
         switch (cells[shoot]) {
-            case '.':
+            case '·':
                 System.out.println("Мимо!");
                 cells[shoot] = '*';
                 break;
@@ -128,6 +147,7 @@ public class Field {
                 System.out.println("ERROR! Unrecognazed symbol!");
         }
         System.out.println("");
+        */
         return changePlayer;
     }
 
@@ -140,23 +160,23 @@ public class Field {
         int decks = getSumDecks();
         // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в три раза меньше размерности поля
         // Очень пригодится, когда количество кораблей и их размерность будет вводиться пользователем
-        if (decks > SIZE / 3) {
+        if (decks > SIZE) {
             System.out.println("Слишком много кораблей, заканчиваем играть, неинтересно!");
             System.out.println("Для продолжения игры необходимо увеличить размерность поля либо уменшить размерность (колличество) кораблей.");
             return;
         }
         // Массив необходим для проверки на соседство кораблей
-        char[] checkCells = new char[SIZE];
+        char[][] checkCells = new char[SIZE][SIZE];
         init(checkCells);
         Random random = new Random();
         for (Ship ship : ships) {
-            setShip(ship, checkCells, random);      // Здесь расставляем кораблики
+//            setShip(ship, checkCells, random);      // Здесь расставляем кораблики
         }
         // Небольшая подсказка перед игрой :-)
-        System.out.print("Чит: ");
-        System.out.println(cells);
+        System.out.println("Чит: ");
+        showField(true);
     }
-
+/*
     // Рекурсивная функция, которая расставляет кораблики
     void setShip(Ship s, char[] ch, Random random) {
         // Если временная позиция подходит, то
@@ -182,4 +202,5 @@ public class Field {
             ch[tempPosition + s.getCountIsNotPaddedDecks()] = 'X';
         }
     }
+    */
 }
