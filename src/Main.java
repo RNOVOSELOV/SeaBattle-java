@@ -6,6 +6,6 @@ public class Main {
         Battle battle = new Battle();
         battle.createPlayers();
         battle.tuneField();
-//        battle.startGame();
+        battle.startGame();
     }
 }

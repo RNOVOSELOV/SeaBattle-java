@@ -124,7 +124,7 @@ public class Field {
     //
 
 
-    boolean doShoot(int shoot) {
+    boolean doShoot(Point shoot) {
         boolean changePlayer = true;
 /*
         switch (cells[shoot]) {
@@ -149,8 +149,8 @@ public class Field {
             default:
                 System.out.println("ERROR! Unrecognazed symbol!");
         }
-        System.out.println("");
         */
+        System.out.println("");
         return changePlayer;
     }
 

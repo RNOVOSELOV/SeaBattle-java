@@ -28,11 +28,11 @@ public class Player {
     }
 
     // Получаем от игрока координату для выстрела
-    int getShoot() {
+    int getShoot(char ch) {
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {
-            System.out.print(name + ", введите координату для выстрела [1-" + Field.SIZE + "]: ");
+            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "]: ");
             if (scanner.hasNextInt()) {
                 shoot = scanner.nextInt();
                 if (shoot >= 1 && shoot <= Field.SIZE)

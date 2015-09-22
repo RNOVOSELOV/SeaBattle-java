@@ -2,6 +2,7 @@
  * Created by novoselov on 16.09.2015.
  */
 public class Battle {
+    // Список игроков (на данный момент поддерживается два игрока)
     private Player[] players;
     private Field field;
 
@@ -34,8 +35,9 @@ public class Battle {
                 player = players[1];
             }
             field.showField(false);
-            int shoot = player.getShoot();
-            if (field.doShoot(shoot))
+            int shootX = player.getShoot('X');
+            int shootY = player.getShoot('Y');
+            if (field.doShoot(new Point(shootX, shootY)))
                 changePlayers = !changePlayers;
         }
         field.showField(false);
