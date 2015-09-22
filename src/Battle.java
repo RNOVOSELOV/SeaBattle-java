@@ -33,12 +33,12 @@ public class Battle {
             } else {
                 player = players[1];
             }
-            field.showField();
+            field.showField(false);
             int shoot = player.getShoot();
             if (field.doShoot(shoot))
                 changePlayers = !changePlayers;
         }
-        field.showField();
+        field.showField(false);
         System.out.println("Игра закончена. Победил игрок: " + player.getName());
     }
 }

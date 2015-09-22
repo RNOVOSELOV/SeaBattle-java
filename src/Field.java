@@ -64,9 +64,16 @@ public class Field {
 
     void addShipsByDefault() {
         //первый параметр - палубность корабля, ограничена только размерностью поля
-        ships.add(new Ship(3, "Линкор Тирпиц"));        // Корабль Трехпалубный
-        ships.add(new Ship(2, "Крейсер Варяг"));        // Двухпалубный
-        ships.add(new Ship(1, "Катер Неустрашимый"));   // Однопалубный
+        ships.add(new Ship(4, "Авианосец \"Авраам Линкольн\""));
+        ships.add(new Ship(3, "Ракетный крейсер \"Анцио\""));    // Корабль Трехпалубный
+        ships.add(new Ship(3, "Ракетный крейсер \"Порт Роял\""));
+        ships.add(new Ship(2, "Эсминец \"Дональд Кук\""));          // Двухпалубный
+        ships.add(new Ship(2, "Эсминец \"Арли Берк\""));
+        ships.add(new Ship(2, "Эсминец \"Спрюенс\""));
+        ships.add(new Ship(1, "Катер \"Фридом\""));               // Однопалубный
+        ships.add(new Ship(1, "Катер \"Форт Ворф\""));
+        ships.add(new Ship(1, "Катер \"Индепенденс\""));
+        ships.add(new Ship(1, "Катер \"Коронадо\""));
     }
 
     void init(char[][] cl) {
@@ -78,10 +85,6 @@ public class Field {
     }
 
     // Печать игрового поля
-    void showField () {
-        showField(true);
-    }
-
     void showField(boolean cheats) {
         for (int i = 0; i < SIZE; i++) {
             for (char cell : cells[i]) {
@@ -104,7 +107,7 @@ public class Field {
     }
 
     // Поиск корабля по заданной координате
-    Ship getShip(int coordinate) {
+    Ship getShip(Point coordinate) {
         for (Ship ship : ships) {
             if (ship.isPlacedIn(coordinate))
                 return ship;
@@ -160,7 +163,7 @@ public class Field {
         int decks = getSumDecks();
         // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в три раза меньше размерности поля
         // Очень пригодится, когда количество кораблей и их размерность будет вводиться пользователем
-        if (decks > SIZE) {
+        if (decks > SIZE*2) {
             System.out.println("Слишком много кораблей, заканчиваем играть, неинтересно!");
             System.out.println("Для продолжения игры необходимо увеличить размерность поля либо уменшить размерность (колличество) кораблей.");
             return;
@@ -170,37 +173,72 @@ public class Field {
         init(checkCells);
         Random random = new Random();
         for (Ship ship : ships) {
-//            setShip(ship, checkCells, random);      // Здесь расставляем кораблики
+            findFreeSpaceForShip(ship, checkCells, random);      // Здесь расставляем кораблики
         }
         // Небольшая подсказка перед игрой :-)
         System.out.println("Чит: ");
         showField(true);
     }
-/*
+
     // Рекурсивная функция, которая расставляет кораблики
-    void setShip(Ship s, char[] ch, Random random) {
-        // Если временная позиция подходит, то
-        int tempPosition = random.nextInt(SIZE - s.getCountIsNotPaddedDecks() + 1);
+    void findFreeSpaceForShip(Ship s, char[][] ch, Random random) {
+        // Определяем вертикальный или горизонтальный будет корабль
+        boolean isHorizontal = random.nextBoolean();
+        // Ищем опорную точку для головы корабля
+        Point tempPoint;
+        int firstCoordinate = random.nextInt(SIZE - s.getCountIsNotPaddedDecks() + 1);
+        int secondCoordinate = random.nextInt(SIZE + 1);
+        if (isHorizontal){
+            tempPoint = new Point(firstCoordinate,secondCoordinate);
+        } else {
+            tempPoint = new Point(secondCoordinate,firstCoordinate);
+        }
+        int x = 0;
+        int y = 0;
         for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
-            if (ch[tempPosition + i] != '.') {
-                setShip(s, ch, random);
+            if (ch[tempPoint.getX() + x][tempPoint.getY() + y] != '·') {
+                findFreeSpaceForShip(s, ch, random);
                 return;
             }
+            if (isHorizontal) {
+                x++;
+            } else {
+                y++;
+            }
         }
-        int[] tmpPositionArray = new int[s.getCountIsNotPaddedDecks()];
-        tmpPositionArray[0] = tempPosition;
+        String srt = (isHorizontal==true)?" true":" false";
+        System.out.println("x: " + tempPoint.getX() + " y: " + tempPoint.getY() + srt);
+        setShipOnFreeSpace(s, ch, tempPoint, isHorizontal);
+    }
+
+    void setShipOnFreeSpace(Ship s, char[][] ch, Point tempPoint, boolean isHorizontal) {
+        int x = 0;
+        int y = 0;
         for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
-            cells[tempPosition + i] = 'X';
-            ch[tempPosition + i] = 'X';
-            tmpPositionArray[i] = tempPosition + i;
+            cells[tempPoint.getX() + x][tempPoint.getY() + y] = 'X';
+            ch[tempPoint.getX() + x][tempPoint.getY() + y] = 'X';
+            s.addPosition(tempPoint.getX() + x, tempPoint.getY() + y);
+            if (isHorizontal) {
+                x++;
+            } else {
+                y++;
+            }
         }
-        s.setPosition(tmpPositionArray);
+        /*
         if (tempPosition != 0) {
             ch[tempPosition - 1] = 'X';
         }
         if (tempPosition + s.getCountIsNotPaddedDecks() < SIZE) {
             ch[tempPosition + s.getCountIsNotPaddedDecks()] = 'X';
         }
+*/
+
+        for (int i = 0; i < SIZE; i++) {
+            for (char cell : ch[i]) {
+                System.out.print(" " + cell + " ");
+            }
+            System.out.printf("\n");
+        }
+        System.out.printf("\n");
     }
-    */
 }

@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+
 /**
  * Created by novoselov on 16.09.2015.
  */
 public class Ship {
     private String name;                    // Имя корабля
-    private int[] position;                         // Координаты на которых располагается корабль
+    private ArrayList<Point> positions;      // Координаты на которых располагается корабль
     private int countIsNotPaddedDecks;      // Колличество неподбитых палуб (в начале игры равно палубности корабля)
 
     // Конструктор по умолчанию
@@ -22,7 +24,7 @@ public class Ship {
         if (name.isEmpty())
             this.name = "Неизвестный (палуб: " + deckCount + ")";
         countIsNotPaddedDecks = deckCount;
-        position = new int[deckCount];
+        positions = new ArrayList<Point>();
     }
 
     public String getName() {
@@ -33,9 +35,9 @@ public class Ship {
         return countIsNotPaddedDecks;
     }
 
-    boolean isPlacedIn(int coordinate) {
-        for (int i : position) {
-            if (i == coordinate)
+    boolean isPlacedIn(Point coordinate) {
+        for (Point i : positions) {
+            if (i.equals(coordinate))
                 return true;
         }
         return false;
@@ -46,8 +48,12 @@ public class Ship {
         return countIsNotPaddedDecks;
     }
 
-    public void setPosition(int[] position) {
-        this.position = position;
+    public void addPosition(Point position) {
+        this.positions.add(position);
+    }
+
+    public void addPosition(int x, int y) {
+        this.positions.add(new Point(x,y));
     }
 
     // Корабль получил дамаг
