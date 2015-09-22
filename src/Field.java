@@ -6,14 +6,14 @@ import java.util.Scanner;
  * Created by novoselov on 16.09.2015.
  */
 public class Field {
-    static int SIZE = 20;       // Размер поля (Добавить ввод размерности от пользователя)
+    static int SIZE = 20;                           // Размер поля (Добавить ввод размерности от пользователя)
     private char[] cells;
-    protected ArrayList<Ship> ships;               // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
+    private ArrayList<Ship> ships;                  // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
 
     Field() {
         cells = new char[SIZE];
-        ships = new ArrayList<>();                            // Можно добавить любое количество кораблей, но пока вручную :-)
-        init(cells);                // инициализируем игровое поле
+        ships = new ArrayList<>();                  // Можно добавить любое количество кораблей, но пока вручную :-)
+        init(cells);                                // инициализируем игровое поле
     }
 
     void tuneSettings() {
@@ -63,7 +63,8 @@ public class Field {
     }
 
     void addShipsByDefault() {
-        ships.add(new Ship(3, "Линкор Тирпиц"));        // Корабль Трехпалубный первый параметр - палубность корабля, ограничена только размерностью поля
+        //первый параметр - палубность корабля, ограничена только размерностью поля
+        ships.add(new Ship(3, "Линкор Тирпиц"));        // Корабль Трехпалубный
         ships.add(new Ship(2, "Крейсер Варяг"));        // Двухпалубный
         ships.add(new Ship(1, "Катер Неустрашимый"));   // Однопалубный
     }
@@ -96,10 +97,8 @@ public class Field {
     // Поиск корабля по заданной координате
     Ship getShip(int coordinate) {
         for (Ship ship : ships) {
-            for (int i = 0; i < ship.position.length; i++) {
-                if (ship.position[i] == coordinate)
-                    return ship;
-            }
+            if (ship.isPlacedIn(coordinate))
+                return ship;
         }
         return null;
     }
@@ -119,9 +118,9 @@ public class Field {
                 Ship s = getShip(shoot);
                 s.setCrash();
                 if (s.getDeck() != 0)
-                    System.out.println(s.name + ": Ранен! Еще чуть чуть...");
+                    System.out.println(s.getName() + ": Ранен! Еще чуть чуть...");
                 else
-                    System.out.println(s.name + ": Цель ликвидирована!");
+                    System.out.println(s.getName() + ": Цель ликвидирована!");
                 cells[shoot] = '@';
                 changePlayer = false;
                 break;
@@ -161,24 +160,26 @@ public class Field {
     // Рекурсивная функция, которая расставляет кораблики
     void setShip(Ship s, char[] ch, Random random) {
         // Если временная позиция подходит, то
-        int tempPosition = random.nextInt(SIZE - s.deckCount + 1);
-        for (int i = 0; i < s.deckCount; i++) {
+        int tempPosition = random.nextInt(SIZE - s.getCountIsNotPaddedDecks() + 1);
+        for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
             if (ch[tempPosition + i] != '.') {
                 setShip(s, ch, random);
                 return;
             }
         }
-        s.position[0] = tempPosition;
-        for (int i = 0; i < s.deckCount; i++) {
+        int[] tmpPositionArray = new int[s.getCountIsNotPaddedDecks()];
+        tmpPositionArray[0] = tempPosition;
+        for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
             cells[tempPosition + i] = 'X';
             ch[tempPosition + i] = 'X';
-            s.position[i] = tempPosition + i;
+            tmpPositionArray[i] = tempPosition + i;
         }
+        s.setPosition(tmpPositionArray);
         if (tempPosition != 0) {
             ch[tempPosition - 1] = 'X';
         }
-        if (tempPosition + s.deckCount < SIZE) {
-            ch[tempPosition + s.deckCount] = 'X';
+        if (tempPosition + s.getCountIsNotPaddedDecks() < SIZE) {
+            ch[tempPosition + s.getCountIsNotPaddedDecks()] = 'X';
         }
     }
 }

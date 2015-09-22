@@ -1,25 +1,34 @@
 /**
  * Created by novoselov on 16.09.2015.
  */
-public class SeaBattle {
-    public static void main(String[] args) {
-        Player[] players = new Player[2];
+public class Battle {
+    private Player[] players;
+    private Field field;
+
+    Battle() {
+        players = new Player[2];
+        field = new Field();
+    }
+
+    public void createPlayers() {
         for (int i = 0; i < players.length; i++) {
             Player temp = new Player();
             temp.setName();
             players[i] = temp;
-            System.out.println(temp.getName());
         }
+    }
 
-        Field field = new Field();
+    public void tuneField() {
         field.tuneSettings();
         field.setShips();
+    }
 
+    public void startGame() {
         System.out.println("\nИгра началась:");
         Player player = players[0];
-        boolean setNextPlayer = true;
+        boolean changePlayers = true;
         while (field.isNotGameOver()) {
-            if (setNextPlayer) {
+            if (changePlayers) {
                 player = players[0];
             } else {
                 player = players[1];
@@ -27,7 +36,7 @@ public class SeaBattle {
             field.showField();
             int shoot = player.getShoot();
             if (field.doShoot(shoot))
-                setNextPlayer = !setNextPlayer;
+                changePlayers = !changePlayers;
         }
         field.showField();
         System.out.println("Игра закончена. Победил игрок: " + player.getName());

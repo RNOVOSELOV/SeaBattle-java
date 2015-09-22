@@ -4,11 +4,11 @@ import java.util.Scanner;
  * Created by novoselov on 16.09.2015.
  */
 public class Player {
-    private String name;        // Имя игрока
+    private String name;
     private static int count;
-    // Конструктор
-    Player () {
-        count ++;
+
+    Player() {
+        count++;
     }
 
     public String getName() {
@@ -21,8 +21,9 @@ public class Player {
         scanner = new Scanner(System.in);
         System.out.print("Имя игрока " + count + " [ВВОД - назначить имя по умолчанию]: ");
         String name = scanner.nextLine();
-        if (name.isEmpty())
-            name = "Безымянный игрок - " + count;
+        if (name.isEmpty()) {
+            name = "Игрок - " + count;
+        }
         this.name = name;
     }
 

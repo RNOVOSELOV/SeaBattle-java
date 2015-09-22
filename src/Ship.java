@@ -2,16 +2,16 @@
  * Created by novoselov on 16.09.2015.
  */
 public class Ship {
-    int[] position;     // Координаты корабля
-    int deckCount;      // Колличество неподбитых палуб (в начале игры равно палубности корабля)
-    String name;        // Имя корабля
+    private String name;                    // Имя корабля
+    private int[] position;                         // Координаты на которых располагается корабль
+    private int countIsNotPaddedDecks;      // Колличество неподбитых палуб (в начале игры равно палубности корабля)
 
     // Конструктор по умолчанию
     Ship() {
         this(1);
     }
 
-    // Конструктор, если не введено имя корябля (Имя корабля присваивается в формате: "Неизвестный(палуб: <<КОЛЛИЧЕСТВО ПАЛУБ>>)")
+    // Конструктор, если не введено имя корябля (Имя корабля присваивается в формате: "Неизвестный (палуб: <<КОЛЛИЧЕСТВО ПАЛУБ>>)")
     Ship(int deckCount) {
         this(deckCount, "Неизвестный (палуб: " + deckCount + ")");
     }
@@ -21,18 +21,38 @@ public class Ship {
         this.name = name;
         if (name.isEmpty())
             this.name = "Неизвестный (палуб: " + deckCount + ")";
-        this.deckCount = deckCount;
+        countIsNotPaddedDecks = deckCount;
         position = new int[deckCount];
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getCountIsNotPaddedDecks() {
+        return countIsNotPaddedDecks;
+    }
+
+    boolean isPlacedIn(int coordinate) {
+        for (int i : position) {
+            if (i == coordinate)
+                return true;
+        }
+        return false;
     }
 
     // Колличество неразрушенных палуб
     int getDeck() {
-        return deckCount;
+        return countIsNotPaddedDecks;
+    }
+
+    public void setPosition(int[] position) {
+        this.position = position;
     }
 
     // Корабль получил дамаг
     void setCrash() {
-        if (deckCount > 0)
-            deckCount--;
+        if (countIsNotPaddedDecks > 0)
+            countIsNotPaddedDecks--;
     }
 }
