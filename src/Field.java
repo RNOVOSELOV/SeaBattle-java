@@ -135,7 +135,7 @@ public class Field {
                 System.out.println("Тысяча чертей! Канонир не трать снаряды, мы сюда уже стреляли!");
                 break;
             case '•':
-                System.out.println("Тысяча чертей! Видимо наводчик пьян, два рада в один пустой квадрат!");
+                System.out.println("Тысяча чертей! Видимо наводчик пьян, неоправданная трата боекомплекта!");
                 break;
             case '∘':
                 System.out.println("Тысяча чертей! Неоправданная трата боекомплекта!");
@@ -245,23 +245,23 @@ public class Field {
             if (isHorizontal) {
                 if (tempPoint.getY() != 0) {
                     if (ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] == '·') {
-                        ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] = '∘';
+                        ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] = '•';
                     }
                 }
                 if (tempPoint.getY() != SIZE - 1) {
                     if (ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] == '·') {
-                        ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] = '∘';
+                        ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] = '•';
                     }
                 }
             } else {
                 if (tempPoint.getX() != 0) {
                     if (ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] == '·') {
-                        ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] = '∘';
+                        ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] = '•';
                     }
                 }
                 if (tempPoint.getX() != SIZE - 1) {
                     if (ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] == '·') {
-                        ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] = '∘';
+                        ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] = '•';
                     }
                 }
             }
@@ -274,62 +274,62 @@ public class Field {
         if (isHorizontal) {
             if (tempPoint.getX() != 0) {
                 if (ch[tempPoint.getX() - 1][tempPoint.getY()] == '·') {
-                    ch[tempPoint.getX() - 1][tempPoint.getY()] = '∘';
+                    ch[tempPoint.getX() - 1][tempPoint.getY()] = '•';
                 }
                 if (tempPoint.getY() != 0) {
                     if (ch[tempPoint.getX() - 1][tempPoint.getY() - 1] == '·') {
-                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '∘';
+                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '•';
                     }
                 }
                 if (tempPoint.getY() != SIZE - 1) {
                     if (ch[tempPoint.getX() - 1][tempPoint.getY() + 1] == '·') {
-                        ch[tempPoint.getX() - 1][tempPoint.getY() + 1] = '∘';
+                        ch[tempPoint.getX() - 1][tempPoint.getY() + 1] = '•';
                     }
                 }
             }
             if (tempPoint.getX() + s.getDeckCount() != SIZE) {
                 if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY()] == '·') {
-                    ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY()] = '∘';
+                    ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY()] = '•';
                 }
                 if (tempPoint.getY() != 0) {
                     if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() - 1] == '·') {
-                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() - 1] = '∘';
+                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() - 1] = '•';
                     }
                 }
                 if (tempPoint.getY() != SIZE - 1) {
                     if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() + 1] == '·') {
-                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() + 1] = '∘';
+                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() + 1] = '•';
                     }
                 }
             }
         } else {
             if (tempPoint.getY() != 0) {
                 if (ch[tempPoint.getX()][tempPoint.getY() - 1] == '·') {
-                    ch[tempPoint.getX()][tempPoint.getY() - 1] = '∘';
+                    ch[tempPoint.getX()][tempPoint.getY() - 1] = '•';
                 }
                 if (tempPoint.getX() != 0) {
                     if (ch[tempPoint.getX() - 1][tempPoint.getY() - 1] == '·') {
-                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '∘';
+                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '•';
                     }
                 }
                 if (tempPoint.getX() != SIZE - 1) {
                     if (ch[tempPoint.getX() + 1][tempPoint.getY() - 1] == '·') {
-                        ch[tempPoint.getX() + 1][tempPoint.getY() - 1] = '∘';
+                        ch[tempPoint.getX() + 1][tempPoint.getY() - 1] = '•';
                     }
                 }
             }
             if (tempPoint.getY() + s.getDeckCount() != SIZE) {
                 if (ch[tempPoint.getX()][tempPoint.getY() + s.getDeckCount()] == '·') {
-                    ch[tempPoint.getX()][tempPoint.getY() + s.getDeckCount()] = '∘';
+                    ch[tempPoint.getX()][tempPoint.getY() + s.getDeckCount()] = '•';
                 }
                 if (tempPoint.getX() != 0) {
                     if (ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeckCount()] == '·') {
-                        ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeckCount()] = '∘';
+                        ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeckCount()] = '•';
                     }
                 }
                 if (tempPoint.getX() != SIZE - 1) {
                     if (ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeckCount()] == '·') {
-                        ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeckCount()] = '∘';
+                        ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeckCount()] = '•';
                     }
                 }
             }
