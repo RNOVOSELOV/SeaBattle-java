@@ -15,7 +15,7 @@ public class Player {
         return name;
     }
 
-    //получаем имя игрока
+    // Устанавливаем имя игрока
     public void setName() {
         Scanner scanner;
         scanner = new Scanner(System.in);
@@ -32,13 +32,16 @@ public class Player {
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {
-            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "]: ");
+            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "; 100 - чит]: ");
             if (scanner.hasNextInt()) {
                 shoot = scanner.nextInt();
-                if (shoot >= 1 && shoot <= Field.SIZE)
+                if (shoot >= 1 && shoot <= Field.SIZE) {
                     break;
-                else
+                } else if (shoot == 100) {        // Игрок хочет почитить ;-)
+                    break;
+                } else {
                     System.out.println(name + " вы ввели неверную координату, повторите ввод пожалуйста.");
+                }
             }
             scanner.nextLine();
         } while (true);
