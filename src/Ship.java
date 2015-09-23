@@ -1,10 +1,14 @@
+import java.util.ArrayList;
+
 /**
  * Created by novoselov on 16.09.2015.
  */
-public class Ship {
-    private String name;                    // Имя корабля
-    private int[] position;                         // Координаты на которых располагается корабль
-    private int countIsNotPaddedDecks;      // Колличество неподбитых палуб (в начале игры равно палубности корабля)
+public class Ship implements Comparable {
+    private String name;                        // Имя корабля
+    private ArrayList<Point> positions;         // Координаты на которых располагается корабль
+    private int countIsNotPaddedDecks;          // Колличество неподбитых палуб (в начале игры равно палубности корабля)
+    private int countDesks;                     // Колличество палуб
+    private boolean isHorizontal;
 
     // Конструктор по умолчанию
     Ship() {
@@ -22,37 +26,70 @@ public class Ship {
         if (name.isEmpty())
             this.name = "Неизвестный (палуб: " + deckCount + ")";
         countIsNotPaddedDecks = deckCount;
-        position = new int[deckCount];
+        countDesks = deckCount;
+        positions = new ArrayList<Point>();
     }
 
     public String getName() {
         return name;
     }
 
-    public int getCountIsNotPaddedDecks() {
-        return countIsNotPaddedDecks;
-    }
-
-    boolean isPlacedIn(int coordinate) {
-        for (int i : position) {
-            if (i == coordinate)
+    // Возвращает ответ на запрос, располагается ли корабль на определенной координате
+    boolean isPlacedIn(Point coordinate) {
+        for (Point i : positions) {
+            if (i.equals(coordinate))
                 return true;
         }
         return false;
     }
 
     // Колличество неразрушенных палуб
-    int getDeck() {
+    int getCurrentDeckCount() {
         return countIsNotPaddedDecks;
     }
 
-    public void setPosition(int[] position) {
-        this.position = position;
+    // Палубность корабля
+    int getDeckCount() {
+        return countDesks;
+    }
+
+    // Добавление в массив positions координаты на которой располагается корабль
+    public void addPosition(Point position) {
+        this.positions.add(position);
+    }
+
+    // Добавление в массив positions координаты на которой располагается корабль
+    public void addPosition(int x, int y) {
+        addPosition(new Point(x, y));
     }
 
     // Корабль получил дамаг
     void setCrash() {
         if (countIsNotPaddedDecks > 0)
             countIsNotPaddedDecks--;
+    }
+
+    // Получение расположения головной точки корабля (необходима при отрисовке области вокруг корабля, когда его подобьют)
+    Point getShipHead() {
+        return positions.get(0);
+    }
+
+    public boolean isHorizontal() {
+        return isHorizontal;
+    }
+
+    public void setIsHorizontal(boolean isHorizontal) {
+        this.isHorizontal = isHorizontal;
+    }
+
+    // необходимо при сортировке списка кораблей
+    // сортировка нужна для того чтобы когда пользователь создает сам флот,
+    // сначала расставлять корабли с наибольшим колличеством палуб
+    // и лишь затем с наименьшим
+    @Override
+    public int compareTo(Object o) throws ClassCastException {
+        if (!(o instanceof Ship))
+            throw new ClassCastException("A ship object expected.");
+        return ((Ship) o).getDeckCount() - this.countDesks;
     }
 }

@@ -1,21 +1,20 @@
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by novoselov on 16.09.2015.
  */
 public class Field {
-    static int SIZE = 20;                           // Размер поля (Добавить ввод размерности от пользователя)
-    private char[] cells;
+    static int SIZE = 10;                           // Размер поля (Добавить ввод размерности от пользователя)
+    private char[][] cells;                         // Игровое поле
     private ArrayList<Ship> ships;                  // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
 
     Field() {
-        cells = new char[SIZE];
-        ships = new ArrayList<>();                  // Можно добавить любое количество кораблей, но пока вручную :-)
+        cells = new char[SIZE][SIZE];
+        ships = new ArrayList<>();
         init(cells);                                // инициализируем игровое поле
     }
 
+    // Настройка игровой флотилии, можно создать любую комбинацию кораблей, однако колличесто палуб не должно превышать SIZE*2, иначе программа выдаст предупреждение и закончит работу
     void tuneSettings() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Нажмите любую клавишу чтоб создать флот вручную [ВВОД - назначить корабли по умолчанию]: ");
@@ -37,6 +36,7 @@ public class Field {
         }
     }
 
+    // Ручное добавление корабля во флотилию
     void addShip(int deck) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Введите имя корабля [ВВОД - назначить имя по умолчанию]: ");
@@ -44,6 +44,7 @@ public class Field {
         ships.add(new Ship(deck, name));
     }
 
+    // Запрос количества палуб для создаваемого вручную корабля
     int getShipDeckCount() {
         int deck;
         Scanner scanner = new Scanner(System.in);
@@ -62,26 +63,46 @@ public class Field {
         return deck;
     }
 
+    // Автогенерация флотилии комбинация по умолчанию 4 палубы - 1 шт; 3 палубы - 2 шт; 2 палубы - 3 шт; 1 палуба - 4 шт
     void addShipsByDefault() {
-        //первый параметр - палубность корабля, ограничена только размерностью поля
-        ships.add(new Ship(3, "Линкор Тирпиц"));        // Корабль Трехпалубный
-        ships.add(new Ship(2, "Крейсер Варяг"));        // Двухпалубный
-        ships.add(new Ship(1, "Катер Неустрашимый"));   // Однопалубный
+        ships.add(new Ship(4, "Авианосец \"Авраам Линкольн\""));
+        ships.add(new Ship(3, "Ракетный крейсер \"Анцио\""));
+        ships.add(new Ship(3, "Ракетный крейсер \"Порт Роял\""));
+        ships.add(new Ship(2, "Эсминец \"Дональд Кук\""));
+        ships.add(new Ship(2, "Эсминец \"Арли Берк\""));
+        ships.add(new Ship(2, "Эсминец \"Спрюенс\""));
+        ships.add(new Ship(1, "Катер \"Фридом\""));
+        ships.add(new Ship(1, "Катер \"Форт Ворф\""));
+        ships.add(new Ship(1, "Катер \"Индепенденс\""));
+        ships.add(new Ship(1, "Катер \"Коронадо\""));
     }
 
-    void init(char[] cl) {
-        for (int i = 0; i < cl.length; i++) {
-            cl[i] = '.';
+    // Инициализация игрового поля
+    void init(char[][] cl) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cl[i][j] = '·';
+            }
         }
     }
 
     // Печать игрового поля
-    void showField() {
-        for (char cell : cells) {
-            if (cell == 'X')
-                System.out.print(".");
-            else
-                System.out.print(cell);
+    void showField(boolean cheats) {
+        System.out.print("  _|");
+        for (int i = 1; i <= SIZE; i++) {
+            System.out.print("_" + i + "_");
+        }
+        System.out.println("");
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (j == 0)
+                    System.out.printf("%2d |", i + 1);
+                if (cells[j][i] == 'O' && cheats == false)
+                    System.out.print(" · ");
+                else
+                    System.out.print(" " + cells[j][i] + " ");
+            }
+            System.out.printf("\n");
         }
         System.out.printf("\n");
     }
@@ -89,13 +110,13 @@ public class Field {
     int getSumDecks() {
         int desc = 0;
         for (Ship ship : ships) {
-            desc = desc + ship.getDeck();
+            desc = desc + ship.getCurrentDeckCount();
         }
         return desc;
     }
 
     // Поиск корабля по заданной координате
-    Ship getShip(int coordinate) {
+    Ship getShip(Point coordinate) {
         for (Ship ship : ships) {
             if (ship.isPlacedIn(coordinate))
                 return ship;
@@ -103,25 +124,32 @@ public class Field {
         return null;
     }
 
-    boolean doShoot(int shoot) {
+    boolean doShoot(Point shoot) {
         boolean changePlayer = true;
-        switch (cells[shoot]) {
-            case '.':
+        switch (cells[shoot.getX()][shoot.getY()]) {
+            case '·':
                 System.out.println("Мимо!");
-                cells[shoot] = '*';
-                break;
-            case '@':
-            case '*':
-                System.out.println("Кэп, сверь координаты, ты сюда уже стрелял!");
+                cells[shoot.getX()][shoot.getY()] = '•';
                 break;
             case 'X':
+                System.out.println("Тысяча чертей! Канонир не трать снаряды, мы сюда уже стреляли!");
+                break;
+            case '•':
+                System.out.println("Тысяча чертей! Видимо наводчик пьян, два рада в один пустой квадрат!");
+                break;
+            case '∘':
+                System.out.println("Тысяча чертей! Неоправданная трата боекомплекта!");
+                break;
+            case 'O':
                 Ship s = getShip(shoot);
+                cells[shoot.getX()][shoot.getY()] = 'X';
+                if ((s.getCurrentDeckCount() - 1) > 0) {
+                    System.out.println("КАРАМБА! Есть попадание, еще чуть чуть: " + s.getName());
+                } else {
+                    System.out.println("СВИСТАТЬ ВСЕХ НАВЕРХ! Цель ликвидирована: " + s.getName());
+                    paintPointsAroundShip(s, cells, s.getShipHead(), s.isHorizontal());
+                }
                 s.setCrash();
-                if (s.getDeck() != 0)
-                    System.out.println(s.getName() + ": Ранен! Еще чуть чуть...");
-                else
-                    System.out.println(s.getName() + ": Цель ликвидирована!");
-                cells[shoot] = '@';
                 changePlayer = false;
                 break;
             default:
@@ -138,48 +166,173 @@ public class Field {
     // Расстановка кораблей из массива на игровом поле
     void setShips() {
         int decks = getSumDecks();
-        // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в три раза меньше размерности поля
-        // Очень пригодится, когда количество кораблей и их размерность будет вводиться пользователем
-        if (decks > SIZE / 3) {
+        // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в два раза больше размерности поля
+        if (decks > SIZE * 2) {
             System.out.println("Слишком много кораблей, заканчиваем играть, неинтересно!");
             System.out.println("Для продолжения игры необходимо увеличить размерность поля либо уменшить размерность (колличество) кораблей.");
             return;
         }
+
+        // Сортировка кораблей от максимального до минимального в списке судов
+        // чтобы расставлять сначала наибольший корабли
+        Collections.sort(ships);
+
         // Массив необходим для проверки на соседство кораблей
-        char[] checkCells = new char[SIZE];
+        char[][] checkCells = new char[SIZE][SIZE];
         init(checkCells);
         Random random = new Random();
         for (Ship ship : ships) {
-            setShip(ship, checkCells, random);      // Здесь расставляем кораблики
+            findFreeSpaceForShip(ship, checkCells, random);      // Здесь расставляем кораблики по одному
         }
-        // Небольшая подсказка перед игрой :-)
-        System.out.print("Чит: ");
-        System.out.println(cells);
     }
 
-    // Рекурсивная функция, которая расставляет кораблики
-    void setShip(Ship s, char[] ch, Random random) {
-        // Если временная позиция подходит, то
-        int tempPosition = random.nextInt(SIZE - s.getCountIsNotPaddedDecks() + 1);
-        for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
-            if (ch[tempPosition + i] != '.') {
-                setShip(s, ch, random);
+    // Рекурсивная функция, которая ищет точку для головы корабля и проверяет уместится ли корабль
+    // Если умещается то продолжает работу, если нет то перезапускает себя и ищет другую опорную точку
+    void findFreeSpaceForShip(Ship s, char[][] ch, Random random) {
+        // Определяем вертикальный или горизонтальный будет корабль
+        boolean isHorizontal = random.nextBoolean();
+        // Ищем опорную точку для головы корабля
+        Point tempPoint;
+        int firstCoordinate = random.nextInt(SIZE - s.getDeckCount() + 1);
+        int secondCoordinate = random.nextInt(SIZE);
+        if (isHorizontal) {
+            tempPoint = new Point(firstCoordinate, secondCoordinate);
+        } else {
+            tempPoint = new Point(secondCoordinate, firstCoordinate);
+        }
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < s.getDeckCount(); i++) {
+            if (ch[tempPoint.getX() + x][tempPoint.getY() + y] != '·') {
+                findFreeSpaceForShip(s, ch, random);
                 return;
             }
+            if (isHorizontal) {
+                x++;
+            } else {
+                y++;
+            }
         }
-        int[] tmpPositionArray = new int[s.getCountIsNotPaddedDecks()];
-        tmpPositionArray[0] = tempPosition;
-        for (int i = 0; i < s.getCountIsNotPaddedDecks(); i++) {
-            cells[tempPosition + i] = 'X';
-            ch[tempPosition + i] = 'X';
-            tmpPositionArray[i] = tempPosition + i;
+        // Головная точка найдена, размещаем корабль на поле
+        setShipOnFreeSpace(s, ch, tempPoint, isHorizontal);
+    }
+
+    // Функция размещает корабль на игровом поле
+    void setShipOnFreeSpace(Ship s, char[][] ch, Point tempPoint, boolean isHorizontal) {
+        int x = 0;
+        int y = 0;
+        s.setIsHorizontal(isHorizontal);
+        for (int i = 0; i < s.getDeckCount(); i++) {
+            cells[tempPoint.getX() + x][tempPoint.getY() + y] = 'O';
+            ch[tempPoint.getX() + x][tempPoint.getY() + y] = 'O';
+            s.addPosition(tempPoint.getX() + x, tempPoint.getY() + y);
+            if (isHorizontal) {
+                x++;
+            } else {
+                y++;
+            }
         }
-        s.setPosition(tmpPositionArray);
-        if (tempPosition != 0) {
-            ch[tempPosition - 1] = 'X';
+        paintPointsAroundShip(s, ch, tempPoint, isHorizontal);
+    }
+
+    // Рисуем вокруг корябля "область несоприкосновения"
+    // при зоздании игрового поля необходима при расстановке, чтобы корабли не касались друг друга
+    // в процессе игры рисует вокруг подбитого корябля характерную область, куда не стоит стрелять игроку
+    void paintPointsAroundShip(Ship s, char[][] ch, Point tempPoint, boolean isHorizontal) {
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < s.getDeckCount(); i++) {
+            if (isHorizontal) {
+                if (tempPoint.getY() != 0) {
+                    if (ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] == '·') {
+                        ch[tempPoint.getX() + x][tempPoint.getY() + y - 1] = '∘';
+                    }
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    if (ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] == '·') {
+                        ch[tempPoint.getX() + x][tempPoint.getY() + y + 1] = '∘';
+                    }
+                }
+            } else {
+                if (tempPoint.getX() != 0) {
+                    if (ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] == '·') {
+                        ch[tempPoint.getX() + x - 1][tempPoint.getY() + y] = '∘';
+                    }
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    if (ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] == '·') {
+                        ch[tempPoint.getX() + x + 1][tempPoint.getY() + y] = '∘';
+                    }
+                }
+            }
+            if (isHorizontal) {
+                x++;
+            } else {
+                y++;
+            }
         }
-        if (tempPosition + s.getCountIsNotPaddedDecks() < SIZE) {
-            ch[tempPosition + s.getCountIsNotPaddedDecks()] = 'X';
+        if (isHorizontal) {
+            if (tempPoint.getX() != 0) {
+                if (ch[tempPoint.getX() - 1][tempPoint.getY()] == '·') {
+                    ch[tempPoint.getX() - 1][tempPoint.getY()] = '∘';
+                }
+                if (tempPoint.getY() != 0) {
+                    if (ch[tempPoint.getX() - 1][tempPoint.getY() - 1] == '·') {
+                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '∘';
+                    }
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    if (ch[tempPoint.getX() - 1][tempPoint.getY() + 1] == '·') {
+                        ch[tempPoint.getX() - 1][tempPoint.getY() + 1] = '∘';
+                    }
+                }
+            }
+            if (tempPoint.getX() + s.getDeckCount() != SIZE) {
+                if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY()] == '·') {
+                    ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY()] = '∘';
+                }
+                if (tempPoint.getY() != 0) {
+                    if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() - 1] == '·') {
+                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() - 1] = '∘';
+                    }
+                }
+                if (tempPoint.getY() != SIZE - 1) {
+                    if (ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() + 1] == '·') {
+                        ch[tempPoint.getX() + s.getDeckCount()][tempPoint.getY() + 1] = '∘';
+                    }
+                }
+            }
+        } else {
+            if (tempPoint.getY() != 0) {
+                if (ch[tempPoint.getX()][tempPoint.getY() - 1] == '·') {
+                    ch[tempPoint.getX()][tempPoint.getY() - 1] = '∘';
+                }
+                if (tempPoint.getX() != 0) {
+                    if (ch[tempPoint.getX() - 1][tempPoint.getY() - 1] == '·') {
+                        ch[tempPoint.getX() - 1][tempPoint.getY() - 1] = '∘';
+                    }
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    if (ch[tempPoint.getX() + 1][tempPoint.getY() - 1] == '·') {
+                        ch[tempPoint.getX() + 1][tempPoint.getY() - 1] = '∘';
+                    }
+                }
+            }
+            if (tempPoint.getY() + s.getDeckCount() != SIZE) {
+                if (ch[tempPoint.getX()][tempPoint.getY() + s.getDeckCount()] == '·') {
+                    ch[tempPoint.getX()][tempPoint.getY() + s.getDeckCount()] = '∘';
+                }
+                if (tempPoint.getX() != 0) {
+                    if (ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeckCount()] == '·') {
+                        ch[tempPoint.getX() - 1][tempPoint.getY() + s.getDeckCount()] = '∘';
+                    }
+                }
+                if (tempPoint.getX() != SIZE - 1) {
+                    if (ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeckCount()] == '·') {
+                        ch[tempPoint.getX() + 1][tempPoint.getY() + s.getDeckCount()] = '∘';
+                    }
+                }
+            }
         }
     }
 }
