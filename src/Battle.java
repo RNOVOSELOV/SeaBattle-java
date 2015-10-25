@@ -21,7 +21,7 @@ public class Battle {
         }
     }
 
-    // Настраиваем игровое поле и расставляем кораблики, если все хорошо продолжаем играть
+    // Настраиваем игровое поле и расставляем кораблики
     public boolean tuneField() {
         field.formFleet();
         return field.setShips();
