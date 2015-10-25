@@ -4,8 +4,9 @@
 public class Main {
     public static void main(String[] args) {
         Battle battle = new Battle();
-        battle.createPlayers();         // Создаем игроков
-        battle.tuneField();             // Настраиваем игровое поле
-        battle.startGame();             // Начинаем игровой цикл
+        battle.createPlayers();             // Создаем игроков
+        if (battle.tuneField()) {           // Настраиваем игровое поле
+            battle.startGame();             // Начинаем игровой цикл
+        }
     }
 }

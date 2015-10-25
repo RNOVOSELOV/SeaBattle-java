@@ -3,19 +3,28 @@ import java.util.*;
 /**
  * Created by novoselov on 16.09.2015.
  */
-public class Field {
-    static int SIZE = 10;                           // Размер поля (Добавить ввод размерности от пользователя)
-    private char[][] cells;                         // Игровое поле
-    private ArrayList<Ship> ships;                  // Массив корабрей, которые размещены на поле (Добавить ввод задаваемого пользователем колличества кораблей)
 
-    Field() {
+public class Field {
+    static final int SIZE = 10;             // Размер поля, пока хардкод (Добавить ввод размерности от пользователя)
+    private char[][] cells;                 // Игровое поле
+    private ArrayList<Ship> ships;          // Массив корабрей, которые размещены на поле
+    private static Field instance = null;
+
+    private Field() {
         cells = new char[SIZE][SIZE];
         ships = new ArrayList<>();
         init(cells);                                // инициализируем игровое поле
     }
 
-    // Настройка игровой флотилии, можно создать любую комбинацию кораблей, однако колличесто палуб не должно превышать SIZE*2, иначе программа выдаст предупреждение и закончит работу
-    void tuneSettings() {
+    public static Field getInstance() {
+        if (instance == null)
+            instance = new Field();
+        return instance;
+    }
+
+    // Настройка игровой флотилии, можно создать любую комбинацию кораблей, однако колличесто палуб не должно превышать SIZE*2,
+    // иначе программа выдаст предупреждение и закончит работу
+    void formFleet() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Нажмите любую клавишу чтоб создать флот вручную [ВВОД - назначить корабли по умолчанию]: ");
         if (scanner.nextLine().isEmpty()) {
@@ -55,7 +64,7 @@ public class Field {
                 if (deck >= 0 && deck <= Field.SIZE) {
                     break;
                 } else {
-                    System.out.println("Вы ввели неверную размерность корабля, повторите ввод пожалуйста.");
+                    System.out.println("Вы ввели неверную размерность корабля, он неумещается на поле, повторите ввод пожалуйста.");
                 }
             }
             scanner.nextLine();
@@ -63,7 +72,8 @@ public class Field {
         return deck;
     }
 
-    // Автогенерация флотилии комбинация по умолчанию 4 палубы - 1 шт; 3 палубы - 2 шт; 2 палубы - 3 шт; 1 палуба - 4 шт
+    // Автогенерация флотилии
+    // Комбинация по умолчанию: 4 палубы - 1 шт; 3 палубы - 2 шт; 2 палубы - 3 шт; 1 палуба - 4 шт
     void addShipsByDefault() {
         ships.add(new Ship(4, "Авианосец \"Авраам Линкольн\""));
         ships.add(new Ship(3, "Ракетный крейсер \"Анцио\""));
@@ -124,8 +134,8 @@ public class Field {
         return null;
     }
 
-    boolean doShoot(Point shoot) {
-        boolean changePlayer = true;
+    boolean doShoot(Player player, Point shoot) {
+        boolean shootIsFail = true;
         switch (cells[shoot.getX()][shoot.getY()]) {
             case '·':
                 System.out.println("Мимо!");
@@ -148,15 +158,16 @@ public class Field {
                 } else {
                     System.out.println("СВИСТАТЬ ВСЕХ НАВЕРХ! Цель ликвидирована: " + s.getName());
                     paintPointsAroundShip(s, cells, s.getShipHead(), s.isHorizontal());
+                    player.playerDestroyShip();
                 }
                 s.setCrash();
-                changePlayer = false;
+                shootIsFail = false;
                 break;
             default:
                 System.out.println("ERROR! Unrecognazed symbol!");
         }
         System.out.println("");
-        return changePlayer;
+        return shootIsFail;
     }
 
     boolean isNotGameOver() {
@@ -164,30 +175,34 @@ public class Field {
     }   // Проверка на потопление всех кораблей
 
     // Расстановка кораблей из массива на игровом поле
-    void setShips() {
+    boolean setShips() {
         int decks = getSumDecks();
-        // Не стал загоняться со сложными формулами, игра начнется только тогда, когда суммарное количество палуб в два раза больше размерности поля
+        // Не стал загоняться со сложными формулами, игра начнется только тогда,
+        // когда суммарное количество палуб меньше чем двойная размерность поля
         if (decks > SIZE * 2) {
-            System.out.println("Слишком много кораблей, заканчиваем играть, неинтересно!");
-            System.out.println("Для продолжения игры необходимо увеличить размерность поля либо уменшить размерность (колличество) кораблей.");
-            return;
+            System.out.println("\nСлишком много кораблей, заканчиваем играть, неинтересно!");
+            System.out.println("Игра начнется только тогда, когда суммарное количество палуб не больше, чем удвоенная размерность поля.");
+            return false;
         }
 
         // Сортировка кораблей от максимального до минимального в списке судов
         // чтобы расставлять сначала наибольший корабли
         Collections.sort(ships);
 
-        // Массив необходим для проверки на соседство кораблей
+        // Временный массив необходим для проверки на соседство кораблей
+        // массив используется только на этапе расстановки кораблей
         char[][] checkCells = new char[SIZE][SIZE];
         init(checkCells);
         Random random = new Random();
         for (Ship ship : ships) {
-            findFreeSpaceForShip(ship, checkCells, random);      // Здесь расставляем кораблики по одному
+            findFreeSpaceForShip(ship, checkCells, random);      // Здесь расставляем кораблики по одному, начиная от наибольшего к наименьшему
         }
+        return true;
     }
 
     // Рекурсивная функция, которая ищет точку для головы корабля и проверяет уместится ли корабль
-    // Если умещается то продолжает работу, если нет то перезапускает себя и ищет другую опорную точку
+    // Если умещается то продолжает работу и размещает корабль на игровом поле,
+    // если не умещается, то перезапускает себя и ищет другую опорную (головную) точку
     void findFreeSpaceForShip(Ship s, char[][] ch, Random random) {
         // Определяем вертикальный или горизонтальный будет корабль
         boolean isHorizontal = random.nextBoolean();
@@ -236,8 +251,8 @@ public class Field {
     }
 
     // Рисуем вокруг корябля "область несоприкосновения"
-    // при зоздании игрового поля необходима при расстановке, чтобы корабли не касались друг друга
-    // в процессе игры рисует вокруг подбитого корябля характерную область, куда не стоит стрелять игроку
+    // 1) при зоздании игрового поля необходима при расстановке, чтобы корабли не касались друг друга, манипулирует с временным массивом
+    // 2) в процессе игры рисует вокруг подбитого корябля характерную область, куда не стоит стрелять игроку
     void paintPointsAroundShip(Ship s, char[][] ch, Point tempPoint, boolean isHorizontal) {
         int x = 0;
         int y = 0;

@@ -4,10 +4,12 @@ import java.util.Scanner;
  * Created by novoselov on 16.09.2015.
  */
 public class Player {
-    private String name;
     private static int count;
+    private String name;                // Имя игрока
+    private int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
 
     Player() {
+        destroyedShipsCount = 0;
         count++;
     }
 
@@ -27,17 +29,26 @@ public class Player {
         this.name = name;
     }
 
+    // Увеличить счетчик подбитых игроком кораблей
+    public void playerDestroyShip() {
+        destroyedShipsCount++;
+    }
+
+    public int getDestroyedShipsCount() {
+        return destroyedShipsCount;
+    }
+
     // Получаем от игрока координату для выстрела
     int getShoot(char ch) {
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {
-            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "; 100 - чит]: ");
+            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "; 0 - чит]: ");
             if (scanner.hasNextInt()) {
                 shoot = scanner.nextInt();
                 if (shoot >= 1 && shoot <= Field.SIZE) {
                     break;
-                } else if (shoot == 100) {        // Игрок хочет почитить ;-)
+                } else if (shoot == 0) {        // Игрок хочет почитить ;-)
                     break;
                 } else {
                     System.out.println(name + " вы ввели неверную координату, повторите ввод пожалуйста.");
