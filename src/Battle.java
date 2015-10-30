@@ -3,7 +3,7 @@
  */
 public class Battle {
     // На данный момент игра завязана на два игрока, поле общее
-    // В дальнейшем у каждого игрока будет свое поле.
+    // В дальнейшем у каждого игрока будет свое поле, даже два одно со своими кораблями, второе - карта обстрела кораблей противника.
     private Player[] players;
     private Field field;
 
@@ -58,7 +58,6 @@ public class Battle {
             }
         }
         field.showField(false);
-
         if (players[0].getDestroyedShipsCount() == players[1].getDestroyedShipsCount()) {
             System.out.println("Игра закончена. Победила дружба, игроки подбили одинаковое количество кораблей (" + player.getDestroyedShipsCount() + ")");
         } else if (players[0].getDestroyedShipsCount() > players[1].getDestroyedShipsCount()) {

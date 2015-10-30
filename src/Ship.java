@@ -5,10 +5,10 @@ import java.util.ArrayList;
  */
 public class Ship implements Comparable {
     private String name;                        // Имя корабля
-    private ArrayList<Point> positions;         // Координаты на которых располагается корабль
-    private int countIsNotPaddedDecks;          // Колличество неподбитых палуб (в начале игры равно палубности корабля)
-    private int countDesks;                     // Колличество палуб
     private boolean isHorizontal;
+    private ArrayList<Point> positions;         // Координаты на которых располагается корабль
+    private int countDesks;                     // Колличество палуб
+    private int countIsNotPaddedDecks;          // Колличество неподбитых палуб (в начале игры равно палубности корабля)
 
     // Конструктор по умолчанию
     Ship() {
@@ -34,7 +34,7 @@ public class Ship implements Comparable {
         return name;
     }
 
-    // Возвращает ответ на запрос, располагается ли корабль на определенной координате
+    // Возвращает ответ на запрос, располагается ли корабль на запрашиваемой координате
     boolean isPlacedIn(Point coordinate) {
         for (Point i : positions) {
             if (i.equals(coordinate))
@@ -43,19 +43,17 @@ public class Ship implements Comparable {
         return false;
     }
 
-    // Колличество неразрушенных палуб
     int getCurrentDeckCount() {
         return countIsNotPaddedDecks;
     }
 
-    // Палубность корабля
     int getDeckCount() {
         return countDesks;
     }
 
     // Добавление в массив positions координаты на которой располагается корабль
     public void addPosition(Point position) {
-        this.positions.add(position);
+        positions.add(position);
     }
 
     // Добавление в массив positions координаты на которой располагается корабль
