@@ -6,9 +6,16 @@ public class Battle {
     // В дальнейшем у каждого игрока будет свое поле, даже два одно со своими кораблями, второе - карта обстрела кораблей противника.
     private Player[] players;
     private Field field;
+    private static Battle instance = null;
 
-    Battle() {
+    private Battle() {
         field = Field.getInstance();
+    }
+
+    public static Battle getInstance() {
+        if (instance == null)
+            instance = new Battle();
+        return instance;
     }
 
     // Настраиваем игроков
