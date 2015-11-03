@@ -7,19 +7,49 @@ import java.util.Random;
 public class Field {
     static final int SIZE = 10;             // Размер поля, пока хардкод (Добавить ввод размерности поля от пользователя, потом, когда научимся работать в графике)
     public char[][] cells;                 // Игровое поле
-    public enum CellState {NOT_FIRED_CELL, FIRED_AND_EMPTY_CELL, NOT_FIRED_DECK, FIRED_DECK;}
+
+    // Состояние ячейки на поле: НЕСТРЕЛЯННАЯ ПУСТАЯ, СТРЕЛЯННАЯ ПУСТАЯ, НЕСТРЕЛЯННАЯ С ПАЛУБОЙ, СТРЕЛЯННАЯ С ПАЛУБОЙ, НЕОПРЕДЕЛЕНО (вдруг пригодится при развитии)
+    public enum CellState {NOT_FIRED_EMPTY_CELL, FIRED_EMPTY_CELL, NOT_FIRED_DECK, FIRED_DECK, UNDEFINED;}
 
     public Field() {
         cells = new char[SIZE][SIZE];
         init(cells);                                // инициализируем игровое поле
     }
 
-    public char getCell(Point p) {
-        return cells[p.getX()][p.getY()];
+    public CellState getCellState(Point p) {
+        CellState state = CellState.UNDEFINED;
+        switch (cells[p.getX()][p.getY()]) {
+            case '·':
+                state = CellState.NOT_FIRED_EMPTY_CELL;
+                break;
+            case 'X':
+                state = CellState.FIRED_DECK;
+                break;
+            case '•':
+                state = CellState.FIRED_EMPTY_CELL;
+                break;
+            case 'O':
+                state = CellState.NOT_FIRED_DECK;
+                break;
+        }
+        return state;
     }
 
-    public void setCell(Point p, char ch) {
-        cells[p.getX()][p.getY()] = ch;
+    public void setCell(Point p, CellState s) {
+        switch (s) {
+            case NOT_FIRED_EMPTY_CELL:
+                cells[p.getX()][p.getY()] = '·';
+                break;
+            case NOT_FIRED_DECK:
+                cells[p.getX()][p.getY()] = 'O';
+                break;
+            case FIRED_DECK:
+                cells[p.getX()][p.getY()] = 'X';
+                break;
+            case FIRED_EMPTY_CELL:
+                cells[p.getX()][p.getY()] = '•';
+                break;
+        }
     }
 
     // Инициализация игрового поля

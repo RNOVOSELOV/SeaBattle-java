@@ -84,20 +84,20 @@ public class Battle {
 
     boolean doShoot(Player player, Point shoot) {
         boolean shootIsFail = true;
-        switch (field.getCell(shoot)) {
-            case '·':
+        switch (field.getCellState(shoot)) {
+            case FIRED_DECK:
+                System.out.println("Тысяча чертей! Канонир, не трать снаряды, палуба уже подбита!");
+                break;
+            case FIRED_EMPTY_CELL:
+                System.out.println("Тысяча чертей! Мы сюда уже стреляли, видимо наводчик пьян!");
+                break;
+            case NOT_FIRED_EMPTY_CELL:
+                field.setCell(shoot, Field.CellState.FIRED_EMPTY_CELL);
                 System.out.println("Мимо!");
-                field.setCell(shoot,'•');
                 break;
-            case 'X':
-                System.out.println("Тысяча чертей! Канонир не трать снаряды, мы сюда уже стреляли!");
-                break;
-            case '•':
-                System.out.println("Тысяча чертей! Видимо наводчик пьян, неоправданная трата боекомплекта!");
-                break;
-            case 'O':
+            case NOT_FIRED_DECK:
                 Ship s = navy.getShip(shoot);
-                field.setCell(shoot,'X');
+                field.setCell(shoot, Field.CellState.FIRED_DECK);
                 if ((s.getCurrentDeckCount() - 1) > 0) {
                     System.out.println("КАРАМБА! Есть попадание, еще чуть чуть: " + s.getName());
                 } else {
