@@ -7,15 +7,20 @@ public class Battle {
     private Player[] players;
     private Field field;
     private static Battle instance = null;
+    public enum Opponent {COMPUTER, HUMAN;}
+    Opponent opponent;
 
     private Battle() {
-        field = Field.getInstance();
     }
 
     public static Battle getInstance() {
         if (instance == null)
             instance = new Battle();
         return instance;
+    }
+
+    public void tuneGamePlay() {
+        opponent = Opponent.HUMAN;
     }
 
     // Настраиваем игроков
@@ -30,6 +35,7 @@ public class Battle {
 
     // Настраиваем игровое поле и расставляем кораблики
     public boolean tuneField() {
+        field = new Field();
         field.formFleet();
         return field.setShips();
     }

@@ -8,18 +8,11 @@ public class Field {
     static final int SIZE = 10;             // Размер поля, пока хардкод (Добавить ввод размерности поля от пользователя, потом, когда научимся работать в графике)
     private char[][] cells;                 // Игровое поле
     private ArrayList<Ship> ships;          // Массив корабрей, которые размещены на поле
-    private static Field instance = null;
 
-    private Field() {
+    public Field() {
         cells = new char[SIZE][SIZE];
         ships = new ArrayList<>();
         init(cells);                                // инициализируем игровое поле
-    }
-
-    public static Field getInstance() {
-        if (instance == null)
-            instance = new Field();
-        return instance;
     }
 
     // Настройка игровой флотилии, можно создать любую комбинацию кораблей, однако колличесто палуб не должно превышать SIZE*2,
@@ -125,7 +118,7 @@ public class Field {
         return desc;
     }
 
-    // Поиск корабля по заданной координате
+    // Поиск на поле корабля по заданной координате
     Ship getShip(Point coordinate) {
         for (Ship ship : ships) {
             if (ship.isPlacedIn(coordinate))
