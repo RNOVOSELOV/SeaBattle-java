@@ -6,9 +6,8 @@ public class Battle {
     // В дальнейшем у каждого игрока будет свое поле, даже два одно со своими кораблями, второе - карта обстрела кораблей противника.
     private Player[] players;
     private Field field;
+    private Navy navy;
     private static Battle instance = null;
-    public enum Opponent {COMPUTER, HUMAN;}
-    Opponent opponent;
 
     private Battle() {
     }
@@ -19,15 +18,12 @@ public class Battle {
         return instance;
     }
 
-    public void tuneGamePlay() {
-        opponent = Opponent.HUMAN;
-    }
-
     // Настраиваем игроков
     public void createPlayers() {
         players = new Player[2];
         for (int i = 0; i < players.length; i++) {
             Player temp = new Player();
+            temp.setGamePlay(Player.PlayerGamePlay.HUMAN);
             temp.setName();
             players[i] = temp;
         }
@@ -36,8 +32,9 @@ public class Battle {
     // Настраиваем игровое поле и расставляем кораблики
     public boolean tuneField() {
         field = new Field();
-        field.formFleet();
-        return field.setShips();
+        navy = new Navy();
+        navy.formFleet();
+        return field.setShips(navy);
     }
 
     // В БОЙ!
@@ -46,7 +43,7 @@ public class Battle {
         Player player = players[0];
         boolean changePlayers = true;
         boolean cheat = false;
-        while (field.isNotGameOver()) {
+        while (navy.navyHasNotSunk()) {
             if (changePlayers) {
                 player = players[0];
             } else {
@@ -66,7 +63,7 @@ public class Battle {
                 System.out.println("Чит: ");
                 continue;
             }
-            if (field.doShoot(player, new Point(shootX, shootY))) {
+            if (doShoot(player, new Point(shootX, shootY))) {
                 changePlayers = !changePlayers;
             }
         }
@@ -78,5 +75,38 @@ public class Battle {
         } else {
             System.out.println("Игра закончена. Победил игрок: " + players[1].getName() + ". Количество уничтоженных кораблей - " + players[1].getDestroyedShipsCount());
         }
+    }
+
+    boolean doShoot(Player player, Point shoot) {
+        boolean shootIsFail = true;
+        switch (field.getCellState(shoot)) {
+            case FIRED_DECK:
+                System.out.println("Тысяча чертей! Канонир, не трать снаряды, палуба уже подбита!");
+                break;
+            case FIRED_EMPTY_CELL:
+                System.out.println("Тысяча чертей! Мы сюда уже стреляли, видимо наводчик пьян!");
+                break;
+            case NOT_FIRED_EMPTY_CELL:
+                field.setCell(shoot, Field.CellState.FIRED_EMPTY_CELL);
+                System.out.println("Мимо!");
+                break;
+            case NOT_FIRED_DECK:
+                Ship s = navy.getShip(shoot);
+                field.setCell(shoot, Field.CellState.FIRED_DECK);
+                if ((s.getCurrentDeckCount() - 1) > 0) {
+                    System.out.println("КАРАМБА! Есть попадание, еще чуть чуть: " + s.getName());
+                } else {
+                    System.out.println("СВИСТАТЬ ВСЕХ НАВЕРХ! Цель ликвидирована: " + s.getName());
+                    field.paintFreePointsAroundShip(s);
+                    player.playerDestroyShip();
+                }
+                s.setCrash();
+                shootIsFail = false;
+                break;
+            default:
+                System.out.println("ERROR! Unrecognazed symbol!");
+        }
+        System.out.println("");
+        return shootIsFail;
     }
 }
