@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -25,6 +26,10 @@ public class Player {
 
     // Устанавливаем имя игрока
     public void setName() {
+        if (gamePlay == PlayerGamePlay.COMPUTER) {
+            name = "Компьютер";
+            return;
+        }
         Scanner scanner;
         scanner = new Scanner(System.in);
         System.out.print("Имя игрока " + count + " [ВВОД - назначить имя по умолчанию]: ");
@@ -46,6 +51,10 @@ public class Player {
 
     // Получаем от игрока координату для выстрела
     int getShoot(char ch) {
+        if (gamePlay == PlayerGamePlay.COMPUTER) {
+            Random rnd = new Random();
+            return rnd.nextInt(10);
+        }
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {
