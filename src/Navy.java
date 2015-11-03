@@ -101,8 +101,8 @@ public class Navy {
         return null;
     }
 
-    // Проверка на потопление всех кораблей
-    boolean isNotGameOver() {
+    // Проверка на потопление всех кораблей и окончание игры
+    boolean navyHasNotSunk() {
         return (getSumDecks() != 0);
     }
 }

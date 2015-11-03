@@ -7,10 +7,16 @@ public class Player {
     private static int count;
     private String name;                // Имя игрока
     private int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
+    public enum PlayerGamePlay {COMPUTER, HUMAN;}
+    private PlayerGamePlay gamePlay;
 
     Player() {
         destroyedShipsCount = 0;
         count++;
+    }
+
+    void setGamePlay (PlayerGamePlay gp) {
+        gamePlay = gp;
     }
 
     public String getName() {

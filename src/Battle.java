@@ -8,8 +8,6 @@ public class Battle {
     private Field field;
     private Navy navy;
     private static Battle instance = null;
-    public enum Opponent {COMPUTER, HUMAN;}
-    Opponent opponent;
 
     private Battle() {
     }
@@ -20,15 +18,12 @@ public class Battle {
         return instance;
     }
 
-    public void tuneGamePlay() {
-        opponent = Opponent.HUMAN;
-    }
-
     // Настраиваем игроков
     public void createPlayers() {
         players = new Player[2];
         for (int i = 0; i < players.length; i++) {
             Player temp = new Player();
+            temp.setGamePlay(Player.PlayerGamePlay.HUMAN);
             temp.setName();
             players[i] = temp;
         }
@@ -48,7 +43,7 @@ public class Battle {
         Player player = players[0];
         boolean changePlayers = true;
         boolean cheat = false;
-        while (navy.isNotGameOver()) {
+        while (navy.navyHasNotSunk()) {
             if (changePlayers) {
                 player = players[0];
             } else {

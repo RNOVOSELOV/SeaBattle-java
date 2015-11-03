@@ -6,14 +6,25 @@ import java.util.Random;
 
 public class Field {
     static final int SIZE = 10;             // Размер поля, пока хардкод (Добавить ввод размерности поля от пользователя, потом, когда научимся работать в графике)
-    public char[][] cells;                 // Игровое поле
+    public char[][] cells;                  // Игровое поле
 
-    // Состояние ячейки на поле: НЕСТРЕЛЯННАЯ ПУСТАЯ, СТРЕЛЯННАЯ ПУСТАЯ, НЕСТРЕЛЯННАЯ С ПАЛУБОЙ, СТРЕЛЯННАЯ С ПАЛУБОЙ, НЕОПРЕДЕЛЕНО (вдруг пригодится при развитии)
-    public enum CellState {NOT_FIRED_EMPTY_CELL, FIRED_EMPTY_CELL, NOT_FIRED_DECK, FIRED_DECK, UNDEFINED;}
+    // Состояние ячейки на поле: НЕСТРЕЛЯННАЯ ПУСТАЯ, СТРЕЛЯННАЯ ПУСТАЯ, НЕСТРЕЛЯННАЯ ПАЛУБА, ПОДБИТАЯ ПАЛУБА, НЕОПРЕДЕЛЕНО (вдруг пригодится при развитии)
+    public enum CellState {
+        NOT_FIRED_EMPTY_CELL, FIRED_EMPTY_CELL, NOT_FIRED_DECK, FIRED_DECK, UNDEFINED;
+    }
 
     public Field() {
         cells = new char[SIZE][SIZE];
-        init(cells);                                // инициализируем игровое поле
+        init(cells);                        // инициализируем игровое поле
+    }
+
+    // Инициализация игрового поля
+    void init(char[][] cl) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cl[i][j] = '·';
+            }
+        }
     }
 
     public CellState getCellState(Point p) {
@@ -52,15 +63,6 @@ public class Field {
         }
     }
 
-    // Инициализация игрового поля
-    void init(char[][] cl) {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                cl[i][j] = '·';
-            }
-        }
-    }
-
     // Печать игрового поля
     void showField(boolean cheats) {
         System.out.print("  _|");
@@ -72,7 +74,7 @@ public class Field {
             for (int j = 0; j < SIZE; j++) {
                 if (j == 0)
                     System.out.printf("%2d |", i + 1);
-                if (cells[j][i] == 'O' && cheats == false)
+                if (cells[j][i] == 'O' && !cheats)
                     System.out.print(" · ");
                 else
                     System.out.print(" " + cells[j][i] + " ");
@@ -82,7 +84,7 @@ public class Field {
         System.out.printf("\n");
     }
 
-    // Расстановка кораблей на игровом поле
+    // Расставить корабли флотилии на игровом поле
     boolean setShips(Navy navy) {
         int decks = navy.getSumDecks();
         // Не стал загоняться со сложными формулами, игра начнется только тогда,
@@ -98,7 +100,7 @@ public class Field {
         init(checkCells);
         Random random = new Random();
         for (Ship ship : navy.getShips()) {
-            findFreeSpaceForShip(ship, checkCells, random);      // Здесь расставляем кораблики, начиная от наибольшего к наименьшему
+            findFreeCellsForShip(ship, checkCells, random);      // Здесь расставляем кораблики, начиная от наибольшего к наименьшему
         }
         return true;
     }
@@ -107,7 +109,7 @@ public class Field {
     // Если умещается то продолжает работу и размещает корабль на игровом поле,
     // если не умещается, то перезапускает себя и ищет другую опорную (головную) точку
     // Правило, что суммарное количество палуб меньше чем двойная размерность поля защищает от бесконейной рекурсии
-    void findFreeSpaceForShip(Ship s, char[][] ch, Random random) {
+    void findFreeCellsForShip(Ship s, char[][] ch, Random random) {
         // Определяем вертикальный или горизонтальный будет корабль
         boolean isHorizontal = random.nextBoolean();
         // Ищем опорную точку для головы корабля
@@ -123,7 +125,7 @@ public class Field {
         int y = 0;
         for (int i = 0; i < s.getDeckCount(); i++) {
             if (ch[tempPoint.getX() + x][tempPoint.getY() + y] != '·') {
-                findFreeSpaceForShip(s, ch, random);
+                findFreeCellsForShip(s, ch, random);
                 return;
             }
             if (isHorizontal) {
@@ -133,11 +135,11 @@ public class Field {
             }
         }
         // Головная точка найдена, размещаем корабль на поле
-        setShipOnFreeSpace(s, ch, tempPoint, isHorizontal);
+        setShipOnFreeCells(s, ch, tempPoint, isHorizontal);
     }
 
     // Функция размещает корабль на игровом поле
-    void setShipOnFreeSpace(Ship s, char[][] ch, Point shipHead, boolean isHorizontal) {
+    void setShipOnFreeCells(Ship s, char[][] ch, Point shipHead, boolean isHorizontal) {
         int x = 0;
         int y = 0;
         s.setIsHorizontal(isHorizontal);
