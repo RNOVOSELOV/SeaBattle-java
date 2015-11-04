@@ -8,16 +8,10 @@ public class Player {
     private static int count;
     private String name;                // Имя игрока
     private int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
-    public enum PlayerGamePlay {COMPUTER, HUMAN;}
-    private PlayerGamePlay gamePlay;
 
     Player() {
         destroyedShipsCount = 0;
         count++;
-    }
-
-    void setGamePlay (PlayerGamePlay gp) {
-        gamePlay = gp;
     }
 
     public String getName() {
@@ -26,10 +20,6 @@ public class Player {
 
     // Устанавливаем имя игрока
     public void setName() {
-        if (gamePlay == PlayerGamePlay.COMPUTER) {
-            name = "Компьютер";
-            return;
-        }
         Scanner scanner;
         scanner = new Scanner(System.in);
         System.out.print("Имя игрока " + count + " [ВВОД - назначить имя по умолчанию]: ");
@@ -51,10 +41,6 @@ public class Player {
 
     // Получаем от игрока координату для выстрела
     int getShoot(char ch) {
-        if (gamePlay == PlayerGamePlay.COMPUTER) {
-            Random rnd = new Random();
-            return rnd.nextInt(10);
-        }
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {

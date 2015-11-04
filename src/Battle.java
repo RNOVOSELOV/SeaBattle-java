@@ -2,8 +2,8 @@
  * Created by novoselov on 16.09.2015.
  */
 public class Battle {
-    // На данный момент игра завязана на два игрока, поле общее
-    // В дальнейшем у каждого игрока будет свое поле, даже два одно со своими кораблями, второе - карта обстрела кораблей противника.
+    // На данный момент игра завязана на два игрока, поле общее, уничтожаемый флот тоже общий
+    // Побеждает тот, кто уничтожил большее количество кораблей
     private Player[] players;
     private Field field;
     private Navy navy;
@@ -20,24 +20,12 @@ public class Battle {
 
     // Настраиваем игроков
     public void createAndTunePlayers() {
-        boolean opponentIsComputer = gameMode();
         players = new Player[2];
         for (int i = 0; i < players.length; i++) {
             Player temp = new Player();
-            if (opponentIsComputer && i == 1) {
-                temp.setGamePlay(Player.PlayerGamePlay.COMPUTER);
-            } else {
-                temp.setGamePlay(Player.PlayerGamePlay.HUMAN);
-            }
             temp.setName();
             players[i] = temp;
         }
-    }
-
-    private boolean gameMode() {
-        // Режим игры, когда появится возможность игры по сети
-        // добавить сюда режимы игры, возможно придется вести enum
-        return true;
     }
 
     // Настраиваем игровое поле и расставляем кораблики
