@@ -1,62 +1,22 @@
-import java.util.Random;
-import java.util.Scanner;
-
 /**
  * Created by novoselov on 16.09.2015.
  */
-public class Player {
-    private static int count;
-    private String name;                // Имя игрока
-    private int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
+public abstract class Player {
+    protected String name;                // Имя игрока
+    protected int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
 
-    Player() {
-        destroyedShipsCount = 0;
-        count++;
-    }
+    public static enum INTELLIGENCE {HUMAN, COMPUTER;}
 
-    public String getName() {
-        return name;
-    }
+    public abstract String getName();
 
     // Устанавливаем имя игрока
-    public void setName() {
-        Scanner scanner;
-        scanner = new Scanner(System.in);
-        System.out.print("Имя игрока " + count + " [ВВОД - назначить имя по умолчанию]: ");
-        String name = scanner.nextLine();
-        if (name.isEmpty()) {
-            name = "Игрок - " + count;
-        }
-        this.name = name;
-    }
+    public abstract void setName();
 
     // Увеличить счетчик подбитых игроком кораблей
-    public void playerDestroyShip() {
-        destroyedShipsCount++;
-    }
+    public abstract void playerDestroyShip();
 
-    public int getDestroyedShipsCount() {
-        return destroyedShipsCount;
-    }
+    public abstract int getDestroyedShipsCount();
 
     // Получаем от игрока координату для выстрела
-    int getShoot(char ch) {
-        Scanner scanner = new Scanner(System.in);
-        int shoot;
-        do {
-            System.out.print(name + ", введите координату " + ch + " [1-" + Field.SIZE + "; 0 - чит]: ");
-            if (scanner.hasNextInt()) {
-                shoot = scanner.nextInt();
-                if (shoot >= 1 && shoot <= Field.SIZE) {
-                    break;
-                } else if (shoot == 0) {        // Игрок хочет почитить ;-)
-                    break;
-                } else {
-                    System.out.println(name + " вы ввели неверную координату, повторите ввод пожалуйста.");
-                }
-            }
-            scanner.nextLine();
-        } while (true);
-        return shoot - 1; // Передаем в формате координат
-    }
+    public abstract int getShoot(char ch);
 }
