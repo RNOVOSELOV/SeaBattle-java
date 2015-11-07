@@ -20,12 +20,10 @@ public class Battle {
 
     // Настраиваем игроков
     public void createAndTunePlayers() {
+        PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
-        for (int i = 0; i < players.length; i++) {
-            Player temp = new Player();
-            temp.setName();
-            players[i] = temp;
-        }
+        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
+        players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
     }
 
     // Настраиваем игровое поле и расставляем кораблики
@@ -78,6 +76,7 @@ public class Battle {
 
     boolean doShoot(Player player, Point shoot) {
         boolean shootIsFail = true;
+        System.out.println(player.getName() + ": выстрел по точке с координатами " + shoot.toString());
         switch (field.getCellState(shoot)) {
             case FIRED_DECK:
                 System.out.println("Тысяча чертей! Канонир, не трать снаряды, палуба уже подбита!");
