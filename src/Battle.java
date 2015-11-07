@@ -5,7 +5,6 @@ public class Battle {
     // На данный момент игра завязана на два игрока, поле общее, уничтожаемый флот тоже общий
     // Побеждает тот, кто уничтожил большее количество кораблей
     private Player[] players;
-    private Field field;
     private Navy navy;
     private static Battle instance = null;
 
@@ -27,11 +26,10 @@ public class Battle {
     }
 
     // Настраиваем игровое поле и расставляем кораблики
-    public boolean tuneField() {
-        field = new Field();
+    public boolean tuneNavyAndFields() {
         navy = new Navy();
         navy.formFleet();
-        return field.setShips(navy);
+        return players[0].setShips(navy) && players[1].setShips(navy);
     }
 
     // В БОЙ!
@@ -77,7 +75,7 @@ public class Battle {
     boolean doShoot(Player player, Point shoot) {
         boolean shootIsFail = true;
         System.out.println(player.getName() + ": выстрел по точке с координатами " + shoot.toString());
-        switch (field.getCellState(shoot)) {
+        switch (player.getCellState(shoot)) {
             case FIRED_DECK:
                 System.out.println("Тысяча чертей! Канонир, не трать снаряды, палуба уже подбита!");
                 break;
@@ -85,17 +83,17 @@ public class Battle {
                 System.out.println("Тысяча чертей! Мы сюда уже стреляли, видимо наводчик пьян!");
                 break;
             case NOT_FIRED_EMPTY_CELL:
-                field.setCell(shoot, Field.CellState.FIRED_EMPTY_CELL);
+                player.setCell(shoot, Field.CellState.FIRED_EMPTY_CELL);
                 System.out.println("Мимо!");
                 break;
             case NOT_FIRED_DECK:
                 Ship s = navy.getShip(shoot);
-                field.setCell(shoot, Field.CellState.FIRED_DECK);
+                player.setCell(shoot, Field.CellState.FIRED_DECK);
                 if ((s.getCurrentDeckCount() - 1) > 0) {
                     System.out.println("КАРАМБА! Есть попадание, еще чуть чуть: " + s.getName());
                 } else {
                     System.out.println("СВИСТАТЬ ВСЕХ НАВЕРХ! Цель ликвидирована: " + s.getName());
-                    field.paintFreePointsAroundShip(s);
+                    player.paintFreePointsAroundShip(s);
                     player.playerDestroyShip();
                 }
                 s.setCrash();
