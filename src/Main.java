@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         GameManager game = GameManager.getInstance();
         game.createAndTunePlayers();                    // Создаем игроков
-        if (game.createNavyAndSetSheeps()) {            // Настраиваем игровое поле
+        if (game.createNavyAndSetShips()) {            // Настраиваем игровое поле
             game.startGame();             // Начинаем игровой цикл
         }
     }

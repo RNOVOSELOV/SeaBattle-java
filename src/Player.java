@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Created by novoselov on 16.09.2015.
  */
@@ -5,12 +7,8 @@ public abstract class Player {
     protected String name;                // Имя игрока
     protected int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
     public Navy navy;
-    private Field myField;
-    private Field opponentMap;
-
-    public void printMaps(boolean cheat) {
-        myField.showField(cheat);
-    }
+    protected Field myField;
+//    protected Field opponentMap;
 
     public static enum INTELLIGENCE {HUMAN, COMPUTER;}
 
@@ -27,14 +25,21 @@ public abstract class Player {
     // Получаем от игрока координату для выстрела
     public abstract int getShoot(char ch);
 
-    public void tuneFields() {
-        myField = new Field();
-        opponentMap = new Field();
+    public abstract void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name);
+
+    public void printPlayerMap() {
+        System.out.println(getName() + ":");
+        myField.showField();
     }
 
-    public void createNavy() {
+    public void tuneFields() {
+        myField = new Field();
+//        opponentMap = new Field();
+    }
+
+    public void createNavy(ArrayList ships) {
         navy = new Navy();
-        navy.formFleet();
+        navy.formFleet(ships);
     }
 
     public boolean setShips() {
@@ -56,4 +61,38 @@ public abstract class Player {
     public boolean navyIsAlive() {
         return navy.navyHasNotSunk();
     }
+
+    public boolean doShoot(Point shoot) {
+        boolean shootIsFail = true;
+        switch (getCellState(shoot)) {
+            case FIRED_DECK:
+                System.out.println("Тысяча чертей! Канонир, не трать снаряды, палуба уже подбита!");
+                break;
+            case FIRED_EMPTY_CELL:
+                System.out.println("Тысяча чертей! Мы сюда уже стреляли, видимо наводчик пьян!");
+                break;
+            case NOT_FIRED_EMPTY_CELL:
+                setCell(shoot, Field.CellState.FIRED_EMPTY_CELL);
+                System.out.println("Мимо!");
+                break;
+            case NOT_FIRED_DECK:
+                Ship s = navy.getShip(shoot);
+                setCell(shoot, Field.CellState.FIRED_DECK);
+                if ((s.getCurrentDeckCount() - 1) > 0) {
+                    System.out.println("КАРАМБА! Есть попадание, еще чуть чуть: " + s.getName());
+                } else {
+                    System.out.println("СВИСТАТЬ ВСЕХ НАВЕРХ! Цель ликвидирована: " + s.getName());
+                    paintFreePointsAroundShip(s);
+                    playerDestroyShip();
+                }
+                s.setCrash();
+                shootIsFail = false;
+                break;
+            default:
+                System.out.println("ERROR! Unrecognazed symbol!");
+        }
+        System.out.println("");
+        return shootIsFail;
+    }
+
 }
