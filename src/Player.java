@@ -4,8 +4,13 @@
 public abstract class Player {
     protected String name;                // Имя игрока
     protected int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
+    public Navy navy;
     private Field myField;
     private Field opponentMap;
+
+    public void printMaps(boolean cheat) {
+        myField.showField(cheat);
+    }
 
     public static enum INTELLIGENCE {HUMAN, COMPUTER;}
 
@@ -27,7 +32,12 @@ public abstract class Player {
         opponentMap = new Field();
     }
 
-    public boolean setShips(Navy navy) {
+    public void createNavy() {
+        navy = new Navy();
+        navy.formFleet();
+    }
+
+    public boolean setShips() {
         return myField.setShips(navy);
     }
 
@@ -41,5 +51,9 @@ public abstract class Player {
 
     public void paintFreePointsAroundShip(Ship s) {
         myField.paintFreePointsAroundShip(s);
+    }
+
+    public boolean navyIsAlive() {
+        return navy.navyHasNotSunk();
     }
 }
