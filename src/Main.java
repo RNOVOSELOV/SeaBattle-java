@@ -3,10 +3,10 @@
  */
 public class Main {
     public static void main(String[] args) {
-        Battle battle = Battle.getInstance();
-        battle.createPlayers();             // Создаем игроков
-        if (battle.createNavy()) {           // Настраиваем игровое поле
-            battle.startGame();             // Начинаем игровой цикл
+        GameManager game = GameManager.getInstance();
+        game.createAndTunePlayers();                    // Создаем игроков
+        if (game.createNavyAndSetSheeps()) {            // Настраиваем игровое поле
+            game.startGame();             // Начинаем игровой цикл
         }
     }
 }

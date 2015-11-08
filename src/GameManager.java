@@ -4,8 +4,15 @@
 public class GameManager {
     private Player[] players;
     private Player currentPlayer;
+    private static GameManager instance = null;
 
-    public GameManager() {
+    private GameManager() {
+    }
+
+    public static GameManager getInstance() {
+        if (instance == null)
+            instance = new GameManager();
+        return instance;
     }
 
     public void createAndTunePlayers() {
@@ -30,21 +37,21 @@ public class GameManager {
         }
     }
 
-    public boolean isNotGameOver() {
+    private boolean isNotGameOver() {
         return players[0].navyIsAlive() && players[1].navyIsAlive();
     }
 
-    public void currentPlayerShowField() {
+    private void currentPlayerShowField() {
         boolean cheat = false;
         currentPlayer.printMaps(cheat);
     }
 
-    public void cheat() {
+    private void cheat() {
         players[0].printMaps(true);
         players[1].printMaps(true);
     }
 
-    public void currentPlayShoot() {
+    private void currentPlayShoot() {
         int shootX = currentPlayer.getShoot('X');
         int shootY = currentPlayer.getShoot('Y');
         if (doShoot(currentPlayer, new Point(shootX, shootY))) {
@@ -52,7 +59,22 @@ public class GameManager {
         }
     }
 
-    boolean doShoot(Player player, Point shoot) {
+    // В БОЙ!
+    public void startGame() {
+        cheat ();//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ /*
+        System.out.println("\nИгра началась:");
+        while (isNotGameOver()) {
+            currentPlayerShowField();
+            currentPlayShoot ();
+        }
+
+        cheat(); // пОКАЗАТЬ ПОЛЯ ПОСЛЕ ИГРЫ
+        showResults ();
+        */
+    }
+
+    private boolean doShoot(Player player, Point shoot) {
         boolean shootIsFail = true;
         System.out.println(player.getName() + ": выстрел по точке с координатами " + shoot.toString());
         switch (player.getCellState(shoot)) {
@@ -86,7 +108,7 @@ public class GameManager {
         return shootIsFail;
     }
 
-    public void showResults() {
+    private void showResults() {
         if (players[0].getDestroyedShipsCount() == players[1].getDestroyedShipsCount()) {
             System.out.println("Игра закончена. Победила дружба, игроки подбили одинаковое количество кораблей (" + currentPlayer.getDestroyedShipsCount() + ")");
         } else if (players[0].getDestroyedShipsCount() > players[1].getDestroyedShipsCount()) {
