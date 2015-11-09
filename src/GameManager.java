@@ -15,7 +15,7 @@ public class GameManager {
     public void createAndTunePlayers() {
         PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
-        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
+        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
         players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         currentPlayer = players[0];
     }
@@ -182,7 +182,13 @@ public class GameManager {
         System.out.println(currentPlayer.getName() + ": выстрел по точке с координатами " + coordinate.toString());
         if (getOpponent().doShoot(coordinate)) {
             changeCurrentPlayer();
+        } else {
+            if (currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
+                // Добавить в массив кординату корябля если корабль ранен
+                // Очитстить массив если корабль уничтожен
+            }
         }
+
     }
 
     // В БОЙ!
