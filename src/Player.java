@@ -26,8 +26,6 @@ public abstract class Player {
     public abstract Point getShoot();
     public abstract int getShoot(char ch);
 
-    public abstract void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name);
-
     public void tuneFields() {
         myField = new Field();
     }

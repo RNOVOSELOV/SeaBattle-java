@@ -154,14 +154,14 @@ public class Field {
         paintFreePointsAroundShip(s, ch);
     }
 
-    void paintFreePointsAroundShip(Ship s) {
+    public void paintFreePointsAroundShip(Ship s) {
         paintFreePointsAroundShip(s, cells);
     }
 
     // Поле рисует вокруг корябля "область несоприкосновения"
     // 1) при создании игрового поля необходима при расстановке, чтобы корабли не касались друг друга, манипулирует с временным массивом
     // 2) в процессе игры рисует вокруг подбитого корябля характерную область, куда не стоит стрелять игроку
-    void paintFreePointsAroundShip(Ship s, char[][] ch) {
+    private void paintFreePointsAroundShip(Ship s, char[][] ch) {
         int x = 0;
         int y = 0;
         Point shipHead = s.getShipHead();
