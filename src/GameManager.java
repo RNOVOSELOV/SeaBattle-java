@@ -12,18 +12,18 @@ public class GameManager {
     private GameManager() {
     }
 
-    public static GameManager getInstance() {
-        if (instance == null)
-            instance = new GameManager();
-        return instance;
-    }
-
     public void createAndTunePlayers() {
         PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
         players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
         players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         currentPlayer = players[0];
+    }
+
+    public static GameManager getInstance() {
+        if (instance == null)
+            instance = new GameManager();
+        return instance;
     }
 
     public boolean createNavyAndSetShips() {
