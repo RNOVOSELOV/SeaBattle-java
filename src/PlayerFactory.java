@@ -15,6 +15,7 @@ public class PlayerFactory {
                 break;
         }
         player.setName();
+        player.intelligence = intelligence;
         player.tuneFields();
         return player;
     }

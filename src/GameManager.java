@@ -15,7 +15,7 @@ public class GameManager {
     public void createAndTunePlayers() {
         PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
-        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
+        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         currentPlayer = players[0];
     }
@@ -132,9 +132,14 @@ public class GameManager {
     }
 
     private void currentPlayShoot() {
-        int shootX = currentPlayer.getShoot('X');
-        int shootY = currentPlayer.getShoot('Y');
-        Point coordinate = new Point(shootX, shootY);
+        Point coordinate;
+        if (currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
+            do {
+                coordinate = currentPlayer.getShoot();
+            } while (!(getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_EMPTY_CELL || getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_DECK));
+        } else {
+            coordinate = currentPlayer.getShoot();
+        }
         System.out.println(currentPlayer.getName() + ": выстрел по точке с координатами " + coordinate.toString());
         if (getOpponent().doShoot(coordinate)) {
             changeCurrentPlayer();

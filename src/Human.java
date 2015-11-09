@@ -44,6 +44,13 @@ public class Human extends Player {
         return destroyedShipsCount;
     }
 
+    @Override
+    public Point getShoot() {
+        int shootX = getShoot('X');
+        int shootY = getShoot('Y');
+        return new Point(shootX, shootY);
+    }
+
     // Получаем от игрока координату для выстрела
     @Override
     public int getShoot(char ch) {
