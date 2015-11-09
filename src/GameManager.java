@@ -193,6 +193,7 @@ public class GameManager {
             playersShowField(false, "Ход игрока: " + currentPlayer.getName());
             currentPlayShoot();
         }
+        currentPlayer = players[0];
         playersShowField(true, "\n" + "Результаты игры.");
         showResults();
     }
