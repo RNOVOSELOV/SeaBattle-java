@@ -64,7 +64,7 @@ public class Field {
     }
 
     // Печать игрового поля
-    void showField(boolean cheats) {
+    void showField() {
         System.out.print("  _|");
         for (int i = 1; i <= SIZE; i++) {
             System.out.print("_" + i + "_");
@@ -72,12 +72,10 @@ public class Field {
         System.out.println("");
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                if (j == 0)
+                if (j == 0) {
                     System.out.printf("%2d |", i + 1);
-                if (cells[j][i] == 'O' && !cheats)
-                    System.out.print(" · ");
-                else
-                    System.out.print(" " + cells[j][i] + " ");
+                }
+                System.out.print(" " + cells[j][i] + " ");
             }
             System.out.printf("\n");
         }

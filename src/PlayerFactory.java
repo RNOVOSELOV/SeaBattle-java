@@ -15,6 +15,7 @@ public class PlayerFactory {
                 break;
         }
         player.setName();
+        player.tuneFields();
         return player;
     }
 }
