@@ -46,14 +46,13 @@ public class Human extends Player {
 
     @Override
     public Point getShoot() {
-        int shootX = getShoot('X');
-        int shootY = getShoot('Y');
+        int shootX = getShootCoordinate('X');
+        int shootY = getShootCoordinate('Y');
         return new Point(shootX, shootY);
     }
 
     // Получаем от игрока координату для выстрела
-    @Override
-    public int getShoot(char ch) {
+    private int getShootCoordinate(char ch) {
         Scanner scanner = new Scanner(System.in);
         int shoot;
         do {

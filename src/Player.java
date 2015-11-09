@@ -24,7 +24,6 @@ public abstract class Player {
 
     // Получаем от игрока координату для выстрела
     public abstract Point getShoot();
-    public abstract int getShoot(char ch);
 
     public void tuneFields() {
         myField = new Field();
