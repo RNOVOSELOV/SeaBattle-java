@@ -40,4 +40,9 @@ public class Computer extends Player {
         rnd.nextInt();
         return rnd.nextInt(Field.SIZE);
     }
+
+    @Override
+    public void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name) {
+        return;
+    }
 }
