@@ -42,7 +42,7 @@ public class Computer extends Player {
     }
 
     @Override
-    public void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name){
+    public void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name) {
         return;
     }
 }

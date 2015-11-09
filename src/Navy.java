@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Scanner;
 
 /**
  * Created by Роман on 03.11.2015.

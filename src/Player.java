@@ -8,7 +8,6 @@ public abstract class Player {
     protected int destroyedShipsCount;    // Количество уничтоженных игроком кораблей
     public Navy navy;
     protected Field myField;
-//    protected Field opponentMap;
 
     public static enum INTELLIGENCE {HUMAN, COMPUTER;}
 
@@ -27,14 +26,8 @@ public abstract class Player {
 
     public abstract void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name);
 
-    public void printPlayerMap() {
-        System.out.println(getName() + ":");
-        myField.showField();
-    }
-
     public void tuneFields() {
         myField = new Field();
-//        opponentMap = new Field();
     }
 
     public void createNavy(ArrayList ships) {
