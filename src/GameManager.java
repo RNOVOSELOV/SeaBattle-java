@@ -15,7 +15,7 @@ public class GameManager {
     public void createAndTunePlayers() {
         PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
-        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
+        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
         currentPlayer = players[0];
     }
@@ -128,13 +128,57 @@ public class GameManager {
     }
 
     private void playersShowField(boolean showOpponentShips, String message) {
-        currentPlayer.printMaps(getOpponent().myField.cells, showOpponentShips, message, getOpponent().getName());
+        if (showOpponentShips == false && currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
+            return;
+        }
+        System.out.println(message);
+        if (!showOpponentShips) {
+            System.out.println("Моя карта:\t\t\t\t\t\t\t\tКарта соперника:");
+        } else {
+            System.out.println(currentPlayer.getName() + ":\t\t\t\t\t\t\t\t\t\t" + getOpponent().getName() + ":");
+        }
+        for (int j = 0; j < 2; j++) {
+            System.out.print("  _|");
+            for (int i = 1; i <= Field.SIZE; i++) {
+                System.out.print("_" + i + "_");
+            }
+            System.out.print("\t\t");
+        }
+        System.out.println("");
+        for (int i = 0; i < Field.SIZE; i++) {
+            for (int j = 0; j < Field.SIZE; j++) {
+                if (j == 0) {
+                    System.out.printf("%2d |", i + 1);
+                }
+                System.out.print(" " + currentPlayer.myField.cells[j][i] + " ");
+                if (j == Field.SIZE - 1) {
+                    System.out.print(" \t\t");
+                }
+            }
+            for (int j = 0; j < Field.SIZE; j++) {
+                if (j == 0) {
+                    System.out.printf("%2d |", i + 1);
+                }
+                if (getOpponent().myField.cells[j][i] == 'O' && showOpponentShips == false) {
+                    System.out.print(" · ");
+                } else {
+                    System.out.print(" " + getOpponent().myField.cells[j][i] + " ");
+                }
+            }
+            System.out.printf("\n");
+        }
+        System.out.printf("\n");
     }
 
     private void currentPlayShoot() {
-        int shootX = currentPlayer.getShoot('X');
-        int shootY = currentPlayer.getShoot('Y');
-        Point coordinate = new Point(shootX, shootY);
+        Point coordinate;
+        if (currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
+            do {
+                coordinate = currentPlayer.getShoot();
+            } while (!(getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_EMPTY_CELL || getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_DECK));
+        } else {
+            coordinate = currentPlayer.getShoot();
+        }
         System.out.println(currentPlayer.getName() + ": выстрел по точке с координатами " + coordinate.toString());
         if (getOpponent().doShoot(coordinate)) {
             changeCurrentPlayer();

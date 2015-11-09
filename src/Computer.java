@@ -35,14 +35,17 @@ public class Computer extends Player {
     }
 
     @Override
+    public Point getShoot() {
+        Point p = new Point();
+        p.setX(getShoot('X'));
+        p.setY(getShoot('Y'));
+        return p;
+    }
+
+    @Override
     public int getShoot(char ch) {
         Random rnd = new Random();
         rnd.nextInt();
         return rnd.nextInt(Field.SIZE);
-    }
-
-    @Override
-    public void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name) {
-        return;
     }
 }

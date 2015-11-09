@@ -10,6 +10,7 @@ public abstract class Player {
     protected Field myField;
 
     public static enum INTELLIGENCE {HUMAN, COMPUTER;}
+    public INTELLIGENCE intelligence;
 
     public abstract String getName();
 
@@ -22,9 +23,8 @@ public abstract class Player {
     public abstract int getDestroyedShipsCount();
 
     // Получаем от игрока координату для выстрела
+    public abstract Point getShoot();
     public abstract int getShoot(char ch);
-
-    public abstract void printMaps(char[][] opponent, boolean showOpponentShips, String message, String name);
 
     public void tuneFields() {
         myField = new Field();
