@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-
 /**
  * Created by Роман on 08.11.2015.
  */
@@ -15,8 +12,8 @@ public class GameManager {
     public void createAndTunePlayers() {
         PlayerFactory pFactory = new PlayerFactory();
         players = new Player[2];
-        players[0] = pFactory.createPlayer(Player.INTELLIGENCE.HUMAN);
-        players[1] = pFactory.createPlayer(Player.INTELLIGENCE.COMPUTER);
+        players[0] = pFactory.createPlayer();
+        players[1] = pFactory.createPlayer();
         currentPlayer = players[0];
     }
 
@@ -27,85 +24,12 @@ public class GameManager {
     }
 
     public boolean createNavyAndSetShips() {
-        ArrayList ships = new ArrayList();
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Нажмите любую клавишу чтоб создать флот вручную [ВВОД - назначить корабли по умолчанию]: ");
-        if (scanner.nextLine().isEmpty()) {
-            ships = addShipsByDefault();
-        } else {
-            do {
-                int deck = getShipDeckCount();
-                if (deck == 0) {
-                    if (ships.size() == 0) {
-                        System.out.println("Вы не содали ни одного корабля, создана флотилия по умолчанию");
-                        ships = addShipsByDefault();
-                    }
-                    break;
-                } else {
-                    ships.add(deck);
-                    ships.add(getShipName(deck));
-                }
-            } while (true);
-        }
-        players[0].createNavy(ships);
-        players[1].createNavy(ships);
+        FleetConfigurator fc = FleetConfigurator.getFleetConfigurator();
+        players[0].createNavy(fc.configureFleet());
+        players[1].createNavy(fc.configureFleet());
         return players[0].setShips() && players[1].setShips();
     }
 
-    // Ручное добавление корабля во флотилию
-    private String getShipName(int deck) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Введите имя корабля [ВВОД - назначить имя по умолчанию]: ");
-        String name = "";
-        name = scanner.nextLine();
-        return name;
-    }
-
-    // Запрос количества палуб для создаваемого вручную корабля
-    private int getShipDeckCount() {
-        int deck;
-        Scanner scanner = new Scanner(System.in);
-        do {
-            System.out.print("Введите палубность корабля [1-" + Field.SIZE + "; 0 - прекратить настройку кораблей]: ");
-            if (scanner.hasNextInt()) {
-                deck = scanner.nextInt();
-                if (deck >= 0 && deck <= Field.SIZE) {
-                    break;
-                } else {
-                    System.out.println("Вы ввели неверную размерность корабля, он неумещается на поле, повторите ввод пожалуйста.");
-                }
-            }
-            scanner.nextLine();
-        } while (true);
-        return deck;
-    }
-
-    // Автогенерация флотилии
-    // Комбинация по умолчанию, по классике: 4 палубы - 1 шт; 3 палубы - 2 шт; 2 палубы - 3 шт; 1 палуба - 4 шт
-    private ArrayList<java.io.Serializable> addShipsByDefault() {
-        ArrayList<java.io.Serializable> s = new ArrayList<java.io.Serializable>();
-        s.add(4);
-        s.add("Авианосец \"Авраам Линкольн\"");
-        s.add(3);
-        s.add("Ракетный крейсер \"Анцио\"");
-        s.add(3);
-        s.add("Ракетный крейсер \"Порт Роял\"");
-        s.add(2);
-        s.add("Эсминец \"Дональд Кук\"");
-        s.add(2);
-        s.add("Эсминец \"Арли Берк\"");
-        s.add(2);
-        s.add("Эсминец \"Спрюенс\"");
-        s.add(1);
-        s.add("Катер \"Фридом\"");
-        s.add(1);
-        s.add("Катер \"Форт Ворф\"");
-        s.add(1);
-        s.add("Катер \"Индепенденс\"");
-        s.add(1);
-        s.add("Катер \"Коронадо\"");
-        return s;
-    }
 
     private void changeCurrentPlayer() {
         if (currentPlayer == players[0]) {
@@ -175,7 +99,8 @@ public class GameManager {
         if (currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
             do {
                 coordinate = currentPlayer.getShoot();
-            } while (!(getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_EMPTY_CELL || getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_DECK));
+            }
+            while (!(getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_EMPTY_CELL || getOpponent().getCellState(coordinate) == Field.CellState.NOT_FIRED_DECK));
         } else {
             coordinate = currentPlayer.getShoot();
         }
@@ -184,8 +109,11 @@ public class GameManager {
             changeCurrentPlayer();
         } else {
             if (currentPlayer.intelligence == Player.INTELLIGENCE.COMPUTER) {
-                // Добавить в массив кординату корябля если корабль ранен
-                // Очитстить массив если корабль уничтожен
+                // Условие необходимо для реализации логики компьютера на добивание корабля, если удалось подбить палубу
+                // Если промазали то пропускаем условие
+                // Если подбитый корабль однопалубный, то тоже пропускаем условие
+                // Если корабль ранен, то добавить в массив Computer.currentFiredShipCoordinates кординату подбитой палубы
+                // очистить массив Computer.currentFiredShipCoordinates, если корабль уничтожен (чтобы компьютер искал новый корабль)
             }
         }
 

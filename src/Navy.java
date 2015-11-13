@@ -26,7 +26,7 @@ public class Navy {
         return ships;
     }
 
-    int getSumDecks() {
+    public int getSumDecks() {
         int desc = 0;
         for (Ship ship : ships) {
             desc = desc + ship.getCurrentDeckCount();
@@ -35,7 +35,7 @@ public class Navy {
     }
 
     // Поиск корабля из флотилии по заданной координате
-    Ship getShip(Point coordinate) {
+    public Ship getShip(Point coordinate) {
         for (Ship ship : ships) {
             if (ship.isPlacedIn(coordinate))
                 return ship;

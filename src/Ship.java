@@ -43,11 +43,11 @@ public class Ship implements Comparable {
         return false;
     }
 
-    int getCurrentDeckCount() {
+    public int getCurrentDeckCount() {
         return countIsNotPaddedDecks;
     }
 
-    int getDeckCount() {
+    public int getDeckCount() {
         return countDesks;
     }
 

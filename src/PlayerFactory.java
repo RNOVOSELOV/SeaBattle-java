@@ -1,10 +1,26 @@
+import java.util.Scanner;
+
 /**
  * Created by Роман on 07.11.2015.
  */
 public class PlayerFactory {
-    Player player;
+    private Player player;
 
-    Player createPlayer(Player.INTELLIGENCE intelligence) {
+    public Player createPlayer() {
+        Scanner scanner;
+        Player.INTELLIGENCE intelligence;
+        scanner = new Scanner(System.in);
+        System.out.print("Игрок - человек [введите Y] или компьютер [введите любое значение]?");
+        String n = scanner.nextLine();
+        if (n.equals("Y") || n.equals("y")) {
+            intelligence = Player.INTELLIGENCE.HUMAN;
+        } else {
+            intelligence = Player.INTELLIGENCE.COMPUTER;
+        }
+        return createPlayer(intelligence);
+    }
+
+    public Player createPlayer(Player.INTELLIGENCE intelligence) {
         switch (intelligence) {
             case COMPUTER:
                 player = new Computer();

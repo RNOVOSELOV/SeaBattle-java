@@ -10,6 +10,7 @@ public abstract class Player {
     protected Field myField;
 
     public static enum INTELLIGENCE {HUMAN, COMPUTER;}
+
     public INTELLIGENCE intelligence;
 
     public abstract String getName();
